@@ -1,0 +1,15 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+    <File Path="THIRD-PARTY-LICENSES.txt" />
+  </Folder>
+  <Project Path="mwl/mwl.vcxproj" Id="86ee5a27-9b71-4dda-8a8e-f7023c431fb1" />
+  <Project Path="mwl_test/mwl_test.vcxproj" Id="230b45e1-9d76-4207-8ae9-5f581df98b53" />
+</Solution>
