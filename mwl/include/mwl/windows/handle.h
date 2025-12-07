@@ -3,7 +3,9 @@
 #include <concepts>
 #include <type_traits>
 
+#include <pch.h>
 #include <Windows.h>
+#include <spdlog/spdlog.h>
 
 namespace mwl::windows
 {
@@ -18,18 +20,22 @@ namespace mwl::windows
 	{
 		void operator()(H handle)
 		{
-			if constexpr (std::same_as<handle, H>)
+			if constexpr (std::same_as<H, mwl::windows::handle>)
 			{
 				if (handle != nullptr)
 				{
+					spdlog::debug("Closed handle: {}", fmt::ptr(handle));
+
 					::CloseHandle(handle);
 					handle = nullptr;
 				}
 			}
-			else if(std::same_as<hkey, H>)
+			else if(std::same_as<H, mwl::windows::hkey>)
 			{
 				if (handle != nullptr)
 				{
+					spdlog::debug("Closed registry key handle: {}", fmt::ptr(handle));
+
 					::RegCloseKey(handle);
 					handle = nullptr;
 				}
