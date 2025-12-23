@@ -3,7 +3,6 @@
 #include <concepts>
 #include <type_traits>
 
-#include <pch.h>
 #include <Windows.h>
 #include <spdlog/spdlog.h>
 
