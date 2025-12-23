@@ -21,6 +21,9 @@
     <ClCompile Include="src\windows\handle_test.cpp">
       <Filter>src\windows</Filter>
     </ClCompile>
+    <ClCompile Include="src\windows\reg_handler_test.cpp">
+      <Filter>src\windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\pch.h">
