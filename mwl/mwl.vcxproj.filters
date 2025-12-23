@@ -19,14 +19,11 @@
     <Filter Include="include\mwl\windows">
       <UniqueIdentifier>{29cf7595-3745-4b12-8476-5fe9c871e8d0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\mwl\common">
+      <UniqueIdentifier>{65f6e84e-4983-45b2-b772-de8a4f26ddab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\framework.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\pch.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\mwl\windows\reg_handler.h">
       <Filter>include\mwl\windows</Filter>
     </ClInclude>
