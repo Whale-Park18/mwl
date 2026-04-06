@@ -1,51 +1,656 @@
 ---
-# .clang-format
-Language: Cpp
+# ============================================================
+# 기본 설정
+# ============================================================
+
+# 기반 스타일 (Microsoft 스타일을 기반으로 커스터마이징)
 BasedOnStyle: Microsoft
 
-# Indentation (.editorconfig matching)
-IndentWidth: 4
-TabWidth: 4
-UseTab: Always
+# 사용할 C++ 표준 버전
+Standard: c++20
 
-# Bracing Style (Allman)
-BreakBeforeBraces: Allman
-
-# Pointer/Reference Alignment (int* ptr;)
-PointerAlignment: Left
-
-# Column Limit
+# 한 줄의 최대 문자 수
 ColumnLimit: 120
 
-# Detailed Formatting Rules
+# 포맷터 비활성화 여부
+DisableFormat: false
+
+# 줄 끝 문자 (LF 자동 감지)
+LineEnding: DeriveLF
+
+# ============================================================
+# 들여쓰기
+# ============================================================
+
+# 기본 들여쓰기 너비 (스페이스 수)
+IndentWidth: 4
+
+# 탭 문자의 너비
+TabWidth: 4
+
+# 탭 사용 여부
+UseTab: Never
+
+# 줄 연속 시 들여쓰기 너비
+ContinuationIndentWidth: 4
+
+# 전처리기 지시문(#if 등) 들여쓰기 너비 (-1 = IndentWidth 따름)
+PPIndentWidth: -1
+
+# 전처리기 지시문 들여쓰기 방식
+IndentPPDirectives: None
+
+# 줄 바꿈된 함수 이름 들여쓰기 여부
+IndentWrappedFunctionNames: false
+
+# 중괄호 초기화 목록의 들여쓰기 너비 (-1 = ContinuationIndentWidth 따름)
+BracedInitializerIndentWidth: 4
+
+# ============================================================
+# 접근 지정자 (public / protected / private)
+# ============================================================
+
+# 접근 지정자의 들여쓰기 오프셋 (음수 = 클래스 본문보다 왼쪽)
 AccessModifierOffset: -4
+
+# 접근 지정자 자체를 들여쓸지 여부
+IndentAccessModifiers: false
+
+# 접근 지정자 뒤 빈 줄 삽입 여부
+EmptyLineAfterAccessModifier: Always
+
+# 접근 지정자 앞 빈 줄 삽입 방식 (논리적 블록 변경 시)
+EmptyLineBeforeAccessModifier: LogicalBlock
+
+# ============================================================
+# 정렬
+# ============================================================
+
+# 여는 괄호 뒤 인수/매개변수 정렬 방식
 AlignAfterOpenBracket: Align
-AlignConsecutiveAssignments: false
-AlignConsecutiveDeclarations: false
+
+# 구조체 배열의 열 정렬 여부
+AlignArrayOfStructures: None
+
+# 연속된 대입 연산자(=) 정렬
+AlignConsecutiveAssignments:
+  Enabled: false                   # 연속된 대입 연산자(=) 정렬 활성화 여부
+  AcrossEmptyLines: false          # 빈 줄을 넘어서도 정렬 여부
+  AcrossComments: false            # 주석을 넘어서도 정렬 여부
+  AlignCompound: false             # +=, -= 등 복합 대입도 정렬
+  AlignFunctionDeclarations: false # 함수 선언의 이름 위치 정렬 여부
+  AlignFunctionPointers: false     # 함수 포인터의 * 위치 정렬 여부
+  PadOperators: true               # 정렬 시 연산자 앞 패딩 추가
+
+# 연속된 비트 필드(:) 정렬
+AlignConsecutiveBitFields:
+  Enabled: false                   # 연속된 비트 필드(:) 정렬 활성화 여부
+  AcrossEmptyLines: false          # 빈 줄을 넘어서도 정렬 여부
+  AcrossComments: false            # 주석을 넘어서도 정렬 여부
+  AlignCompound: false             # 복합 비트 필드 연산도 정렬 여부
+  AlignFunctionDeclarations: false # 함수 선언의 이름 위치 정렬 여부
+  AlignFunctionPointers: false     # 함수 포인터의 * 위치 정렬 여부
+  PadOperators: false              # 정렬 시 연산자 앞 패딩 추가 여부
+
+# 연속된 변수 선언 정렬
+AlignConsecutiveDeclarations:
+  Enabled: false                   # 연속된 변수 선언 정렬 활성화 여부
+  AcrossEmptyLines: false          # 빈 줄을 넘어서도 정렬 여부
+  AcrossComments: false            # 주석을 넘어서도 정렬 여부
+  AlignCompound: false             # 복합 대입 연산자도 정렬 여부
+  AlignFunctionDeclarations: true  # 함수 선언의 이름 위치 정렬 여부
+  AlignFunctionPointers: false     # 함수 포인터의 * 위치 정렬 여부
+  PadOperators: false              # 정렬 시 연산자 앞 패딩 추가 여부
+
+# 연속된 매크로 정의 정렬
+AlignConsecutiveMacros:
+  Enabled: false                   # 연속된 매크로 정의 정렬 활성화 여부
+  AcrossEmptyLines: false          # 빈 줄을 넘어서도 정렬 여부
+  AcrossComments: false            # 주석을 넘어서도 정렬 여부
+  AlignCompound: false             # 복합 대입 연산자도 정렬 여부
+  AlignFunctionDeclarations: false # 함수 선언의 이름 위치 정렬 여부
+  AlignFunctionPointers: false     # 함수 포인터의 * 위치 정렬 여부
+  PadOperators: false              # 정렬 시 연산자 앞 패딩 추가 여부
+
+# 연속된 짧은 case 구문 정렬
+AlignConsecutiveShortCaseStatements:
+  Enabled: false          # 연속된 짧은 case 구문 정렬 활성화 여부
+  AcrossEmptyLines: false # 빈 줄을 넘어서도 정렬 여부
+  AcrossComments: false   # 주석을 넘어서도 정렬 여부
+  AlignCaseArrows: false  # => 화살표 정렬
+  AlignCaseColons: false  # : 콜론 정렬
+
+# 백슬래시 줄 연속 문자 정렬 방향
 AlignEscapedNewlines: Right
-AlignOperands: true
-AlignTrailingComments: true
+
+# 이항 연산자 피연산자 정렬 방식
+AlignOperands: Align
+
+# 후행 주석 정렬
+AlignTrailingComments:
+  Kind: Always      # 항상 정렬
+  OverEmptyLines: 0 # 빈 줄을 넘어 정렬하지 않음
+
+# ============================================================
+# 한 줄 허용
+# ============================================================
+
+# 모든 인수를 다음 줄에 배치 허용
+AllowAllArgumentsOnNextLine: true
+
+# 선언의 모든 매개변수를 다음 줄에 배치 허용
 AllowAllParametersOfDeclarationOnNextLine: true
-AllowShortBlocksOnASingleLine: false
+
+# noexcept 지정자 앞 줄 바꿈 허용 여부
+AllowBreakBeforeNoexceptSpecifier: Never
+
+# 짧은 블록({ }) 한 줄 허용
+AllowShortBlocksOnASingleLine: Never
+
+# 짧은 case 표현식 한 줄 허용
+AllowShortCaseExpressionOnASingleLine: true
+
+# 짧은 case 레이블 한 줄 허용
 AllowShortCaseLabelsOnASingleLine: false
+
+# 짧은 compound requires 표현식 한 줄 허용
+AllowShortCompoundRequirementOnASingleLine: true
+
+# 짧은 enum 한 줄 허용
+AllowShortEnumsOnASingleLine: false
+
+# 짧은 함수 한 줄 허용 (None = 허용 안 함)
 AllowShortFunctionsOnASingleLine: None
-AllowShortIfStatementsOnASingleLine: false
+
+# 짧은 if 문 한 줄 허용
+AllowShortIfStatementsOnASingleLine: Never
+
+# 짧은 람다 한 줄 허용
+AllowShortLambdasOnASingleLine: All
+
+# 짧은 루프 한 줄 허용
 AllowShortLoopsOnASingleLine: false
 
-# Include Management
-SortIncludes: true
+# 짧은 namespace 한 줄 허용
+AllowShortNamespacesOnASingleLine: false
+
+# ============================================================
+# 줄 바꿈
+# ============================================================
+
+# 함수 정의 반환 타입 뒤 줄 바꿈 (구식 방식)
+AlwaysBreakAfterDefinitionReturnType: None
+
+# 멀티라인 문자열 리터럴 전 줄 바꿈
+AlwaysBreakBeforeMultilineStrings: false
+
+# 인접한 문자열 리터럴 사이 줄 바꿈
+BreakAdjacentStringLiterals: true
+
+# C++11 속성([[nodiscard]] 등) 뒤 줄 바꿈
+BreakAfterAttributes: Leave
+
+# 함수 반환 타입 뒤 줄 바꿈
+BreakAfterReturnType: None
+
+# 배열 리터럴 줄 바꿈
+BreakArrays: false
+
+# 이항 연산자 앞/뒤 줄 바꿈 (None = 연산자 뒤)
+BreakBeforeBinaryOperators: None
+
+# 인라인 ASM 콜론 앞 줄 바꿈
+BreakBeforeInlineASMColon: OnlyMultiline
+
+# 삼항 연산자 앞 줄 바꿈
+BreakBeforeTernaryOperators: true
+
+# 이항 연산 줄 바꿈 방식
+BreakBinaryOperations: Never
+
+# 함수 정의 매개변수 목록 줄 바꿈
+BreakFunctionDefinitionParameters: false
+
+# 긴 문자열 리터럴 줄 바꿈
+BreakStringLiterals: true
+
+# 한 줄 포맷 비활성화 정규식 (clang-format 21 부터 지원)
+#OneLineFormatOffRegex: ""
+
+# ============================================================
+# 중괄호
+# ============================================================
+
+# 중괄호 배치 스타일 (Custom = BraceWrapping 설정 사용)
+BreakBeforeBraces: Custom
+
+# 상세 중괄호 배치 설정
+BraceWrapping:
+  AfterCaseLabel: false         # case 레이블 뒤 중괄호를 다음 줄에
+  AfterClass: true              # class 선언 뒤 중괄호를 다음 줄에
+  AfterControlStatement: Always # if/for/while 등 제어문 뒤 중괄호를 다음 줄에
+  AfterEnum: true               # enum 선언 뒤 중괄호를 다음 줄에
+  AfterFunction: true           # 함수 정의 뒤 중괄호를 다음 줄에
+  AfterNamespace: true          # namespace 뒤 중괄호를 다음 줄에
+  AfterStruct: true             # struct 선언 뒤 중괄호를 다음 줄에
+  AfterUnion: true              # union 선언 뒤 중괄호를 같은 줄에
+  AfterExternBlock: true        # extern "C" 뒤 중괄호를 다음 줄에
+  BeforeCatch: true             # catch 앞 중괄호를 다음 줄에
+  BeforeElse: true              # else 앞 중괄호를 다음 줄에
+  BeforeLambdaBody: false       # 람다 본문 앞 중괄호를 같은 줄에
+  BeforeWhile: false            # do-while의 while 앞 중괄호를 같은 줄에
+  IndentBraces: false           # 중괄호 자체를 들여쓰지 않음
+  SplitEmptyFunction: true      # 빈 함수 본문 분리
+  SplitEmptyRecord: true        # 빈 클래스/구조체 본문 분리
+  SplitEmptyNamespace: true     # 빈 namespace 본문 분리
+
+# 중괄호 자동 삽입 여부 (if/for/while 단문에 중괄호 추가)
+InsertBraces: false
+
+# ============================================================
+# 빈 줄
+# ============================================================
+
+# 빈 줄 유지 옵션
+KeepEmptyLines:
+  AtEndOfFile: false   # 파일 끝 빈 줄 유지
+  AtStartOfBlock: true # 블록 시작 빈 줄 유지
+  AtStartOfFile: true  # 파일 시작 빈 줄 유지
+
+# 폼 피드 문자 유지 여부
+KeepFormFeed: false
+
+# 유지할 최대 연속 빈 줄 수
+MaxEmptyLinesToKeep: 1
+
+# 래핑되지 않은 줄 내의 빈 줄 제거 여부
+RemoveEmptyLinesInUnwrappedLines: false
+
+# 정의 블록 간 구분 방식
+SeparateDefinitionBlocks: Always
+
+# ============================================================
+# 공백
+# ============================================================
+
+# C 스타일 캐스트 뒤 공백: (int)x
+SpaceAfterCStyleCast: false
+
+# 논리 NOT 연산자(!a) 뒤 공백
+SpaceAfterLogicalNot: false
+
+# operator 키워드 뒤 공백 (clang-format 21 부터 지원)
+#SpaceAfterOperatorKeyword: false
+
+# template 키워드 뒤 공백
+SpaceAfterTemplateKeyword: false
+
+# 대입 연산자 앞 공백
+SpaceBeforeAssignmentOperators: true
+
+# case 콜론 앞 공백
+SpaceBeforeCaseColon: false
+
+# 중괄호 초기화 목록 앞 공백
+SpaceBeforeCpp11BracedList: false
+
+# 생성자 초기화 목록 콜론 앞 공백
+SpaceBeforeCtorInitializerColon: true
+
+# 상속 콜론 앞 공백: class A : public B
+SpaceBeforeInheritanceColon: true
+
+# 괄호 앞 공백 삽입 기준 (제어문만)
+SpaceBeforeParens: ControlStatements
+
+# SpaceBeforeParens: Custom 일 때 괄호 앞 공백을 세부적으로 제어하는 옵션
+SpaceBeforeParensOptions:
+  AfterControlStatements: true        # if/for/while 뒤 공백
+  AfterForeachMacros: true            # foreach 매크로 뒤 공백
+  AfterFunctionDeclarationName: false # 함수 선언 이름 뒤 공백
+  AfterFunctionDefinitionName: false  # 함수 정의 이름 뒤 공백
+  AfterIfMacros: true                 # if 매크로 뒤 공백
+  AfterOverloadedOperator: false      # 오버로드 연산자 뒤 공백
+  AfterPlacementOperator: false       # new/delete 배치 연산자 뒤 공백
+  AfterRequiresInClause: false        # requires 절 뒤 공백
+  AfterRequiresInExpression: false    # requires 표현식 뒤 공백
+  BeforeNonEmptyParentheses: false    # 비어있지 않은 괄호 앞 공백
+
+# 범위 기반 for 콜론 앞 공백: for (auto x : v)
+SpaceBeforeRangeBasedForLoopColon: true
+
+# 배열 첨자 연산자 앞 공백: a [i]
+SpaceBeforeSquareBrackets: false
+
+# 빈 블록 내 공백: { }
+SpaceInEmptyBlock: false
+
+# 후행 주석 앞 최소 공백 수
+SpacesBeforeTrailingComments: 1
+
+# 템플릿 꺾쇠 괄호 안 공백: vector< int >
+SpacesInAngles: Never
+
+# 컨테이너 리터럴 내 공백: {1, 2, 3}
+SpacesInContainerLiterals: true
+
+# 줄 주석(//) 뒤 공백 수 제한
+SpacesInLineCommentPrefix:
+  Minimum: 1
+  Maximum: -1                 # 최대 제한 없음
+
+# 괄호 안 공백 여부
+SpacesInParens: Never
+
+# SpacesInParens: Custom 일 때 괄호 안 공백을 세부적으로 제어하는 옵션
+SpacesInParensOptions:
+  ExceptDoubleParentheses: false # ((x)) 예외 처리 없음
+  InConditionalStatements: false # 조건문 괄호 안 공백
+  InCStyleCasts: false           # C 스타일 캐스트 안 공백
+  InEmptyParentheses: false      # 빈 괄호 안 공백
+  Other: false
+
+# 배열 첨자 안 공백: a[ i ]
+SpacesInSquareBrackets: false
+
+# 비트 필드 콜론 양쪽 공백: int x : 4
+BitFieldColonSpacing: Both
+
+# 포인터 한정자(const, volatile) 주변 공백
+SpaceAroundPointerQualifiers: Default
+
+# ============================================================
+# 포인터 & 참조
+# ============================================================
+
+# 포인터 * 위치 (Left = 타입 쪽, Right = 변수명 쪽)
+PointerAlignment: Left
+
+# 참조 & 위치 (Pointer = PointerAlignment 따름)
+ReferenceAlignment: Pointer
+
+# 코드에서 포인터 정렬 자동 감지 여부
+DerivePointerAlignment: false
+
+# const 등 한정자 정렬 방식
+QualifierAlignment: Leave
+
+# ============================================================
+# 템플릿 & 개념 (Concepts)
+# ============================================================
+
+# template<...> 닫는 꺾쇠 앞 줄 바꿈 (clang-format 21 부터 지원)
+#BreakBeforeTemplateCloser: false
+
+# template 선언 줄 바꿈 방식
+BreakTemplateDeclarations: MultiLine
+
+# concept 선언 앞 줄 바꿈
+BreakBeforeConceptDeclarations: Always
+
+# requires 절 들여쓰기 여부
+IndentRequiresClause: true
+
+# requires 절 위치
+RequiresClausePosition: OwnLine
+
+# requires 표현식 들여쓰기 기준
+RequiresExpressionIndentation: OuterScope
+
+# ============================================================
+# 생성자 초기화 목록
+# ============================================================
+
+# 생성자 초기화 목록 줄 바꿈 위치
+BreakConstructorInitializers: BeforeColon
+
+# 생성자 초기화 목록 들여쓰기 너비
+ConstructorInitializerIndentWidth: 4
+
+# 생성자 초기화 목록 패킹 방식
+PackConstructorInitializers: BinPack
+
+# ============================================================
+# 상속
+# ============================================================
+
+# 상속 목록 줄 바꿈 위치: class A\n  : public B
+BreakInheritanceList: BeforeColon
+
+# ============================================================
+# 람다
+# ============================================================
+
+# 람다 본문 들여쓰기 기준 (Signature = 람다 시그니처 기준)
+LambdaBodyIndentation: Signature
+
+# ============================================================
+# extern 블록
+# ============================================================
+
+# extern "C" 블록 내부 들여쓰기
+IndentExternBlock: AfterExternBlock
+
+# ============================================================
+# include 정렬
+# ============================================================
+
+# include 블록 정렬 방식 (Preserve = 현재 그룹 유지)
 IncludeBlocks: Regroup
 
-# Language Standards
-Standard: Latest
-DerivePointerAlignment: false
-SpaceAfterCStyleCast: false
-SpaceBeforeAssignmentOperators: true
-SpaceBeforeParens: ControlStatements
-SpaceInEmptyParentheses: false
-SpacesBeforeTrailingComments: 1
-SpacesInCStyleCastParentheses: false
-SpacesInContainerLiterals: false
-SpacesInParentheses: false
-SpacesInSquareBrackets: false
-...
+# include 우선순위 카테고리 정의
+# Priority 숫자가 낮을수록 먼저 배치되며, IncludeIsMainRegex 로 식별된 주 헤더는 Priority 0 으로 자동 처리됨
+IncludeCategories:
+  # 1. 구현 파일의 주 헤더 — IncludeIsMainRegex 가 Priority 0 으로 자동 처리하므로 별도 항목 불필요
+  #    (같은 디렉토리의 다른 헤더 "foo2.h" 등은 Priority 5 프로젝트 헤더로 분류됨)
+
+  # 2. C 또는 시스템 헤더 (예: <stdio.h>, <sys/types.h>, <WinSock2.h>)
+  #    ※ <windows> 처럼 .h 없는 Windows SDK 헤더는 <windows.h> 로 표기해야 이 그룹에 배치됨
+  - Regex: '^<[a-zA-Z0-9_/]+\.h>$'
+    Priority: 1
+
+  # 3. C++ 표준 헤더 (예: <iostream>, <vector>, 확장자 없는 소문자 꺾쇠 헤더)
+  - Regex: '^<[a-z][a-z0-9_]*>$'
+    Priority: 2
+
+  # 4. 서드파티 헤더 (꺾쇠 또는 따옴표 모두 가능; 예: "boost/filesystem/path.hpp", "cpr/api.h")
+  #    꺾쇠: 위 2·3번에 미해당된 모든 꺾쇠 헤더
+  #    따옴표: 아래 목록의 라이브러리 이름으로 시작하는 헤더 — 프로젝트에 맞게 추가/수정할 것
+  - Regex: '^(<.+>|"(boost|cpr|curl)/.+")$'
+    Priority: 3
+
+  # 5. 프로젝트 헤더 (예: "../windows/common/reg_handle.h", "foo2.h")
+  - Regex: '^".+"$'
+    Priority: 4
+
+# 메인 소스 파일과 대응하는 헤더 감지 정규식
+IncludeIsMainRegex: (test_)$
+
+# 메인 소스 파일로 간주할 파일명 정규식 (헤더 우선순위 결정에 사용, 빈 문자열 = 비활성화)
+IncludeIsMainSourceRegex: ""
+
+# 메인 헤더 include 문자 (Quote = 큰따옴표 우선)
+MainIncludeChar: Quote
+
+# include 정렬 여부
+SortIncludes: CaseInsensitive
+
+# using 선언 정렬 방식
+SortUsingDeclarations: LexicographicNumeric
+
+# ============================================================
+# 네임스페이스
+# ============================================================
+
+# namespace 본문 들여쓰기 방식
+NamespaceIndentation: None
+
+# 중첩 namespace 한 줄 압축: namespace A { namespace B {
+CompactNamespaces: false
+
+# namespace 닫는 중괄호에 주석 추가: } // namespace A
+FixNamespaceComments: true
+
+# 짧은 namespace로 간주할 최대 줄 수
+ShortNamespaceLines: 1
+
+# namespace 본문 앞뒤 빈 줄 삽입
+WrapNamespaceBodyWithEmptyLines: Always
+
+# export 블록 내부 들여쓰기
+IndentExportBlock: true
+
+# ============================================================
+# switch / case
+# ============================================================
+
+# case 블록 들여쓰기 여부
+IndentCaseBlocks: false
+
+# case 레이블 들여쓰기 여부
+IndentCaseLabels: false
+
+# ============================================================
+# goto 레이블
+# ============================================================
+
+# goto 레이블 들여쓰기 여부
+IndentGotoLabels: true
+
+# ============================================================
+# 매크로
+# ============================================================
+
+# 속성처럼 동작하는 매크로 목록 (__attribute__ 위치 처리)
+AttributeMacros:
+  - __capability
+
+# foreach 매크로 목록 (범위 기반 for처럼 처리)
+ForEachMacros:
+  - foreach
+  - Q_FOREACH
+  - BOOST_FOREACH
+
+# if 매크로 목록 (if 문처럼 처리)
+IfMacros:
+  - KJ_IF_MAYBE
+
+# 매크로 블록 시작/끝 마커 (들여쓰기 억제)
+MacroBlockBegin: ""
+
+MacroBlockEnd: ""
+# 구문 속성처럼 동작하는 매크로 목록
+StatementAttributeLikeMacros:
+  - Q_EMIT
+
+# 독립 구문처럼 동작하는 매크로 목록
+StatementMacros:
+  - Q_UNUSED
+  - QT_REQUIRE_VERSION
+
+# 공백에 민감한 매크로 목록 (포맷 안 함)
+WhitespaceSensitiveMacros:
+  - BOOST_PP_STRINGIZE
+  - CF_SWIFT_NAME
+  - NS_SWIFT_NAME
+  - PP_STRINGIZE
+  - STRINGIZE
+
+# 매크로 정의 본문 포맷 건너뛰기
+SkipMacroDefinitionBody: false
+
+# ============================================================
+# 줄 바꿈 패널티 (값이 클수록 해당 위치 줄 바꿈을 기피)
+# ============================================================
+
+# 대입 연산자 앞 줄 바꿈 패널티
+PenaltyBreakAssignment: 2
+
+# 첫 번째 함수 호출 인수 앞 줄 바꿈 패널티
+PenaltyBreakBeforeFirstCallParameter: 19
+
+# 멤버 접근 연산자(. / ->) 앞 줄 바꿈 패널티
+PenaltyBreakBeforeMemberAccess: 150
+
+# 주석 줄 바꿈 패널티
+PenaltyBreakComment: 300
+
+# << 연산자 앞 줄 바꿈 패널티
+PenaltyBreakFirstLessLess: 120
+
+# 여는 괄호 뒤 줄 바꿈 패널티
+PenaltyBreakOpenParenthesis: 0
+
+# 범위 해결 연산자(::) 앞 줄 바꿈 패널티
+PenaltyBreakScopeResolution: 500
+
+# 문자열 리터럴 줄 바꿈 패널티
+PenaltyBreakString: 1000
+
+# template 선언 줄 바꿈 패널티
+PenaltyBreakTemplateDeclaration: 10
+
+# 열 제한 초과 문자당 패널티
+PenaltyExcessCharacter: 1000000
+
+# 들여쓰기 공백 패널티
+PenaltyIndentedWhitespace: 0
+
+# 반환 타입을 별도 줄에 배치하는 패널티
+PenaltyReturnTypeOnItsOwnLine: 1000
+
+# ============================================================
+# 인수 / 매개변수 패킹
+# ============================================================
+
+# 함수 호출 인수 bin-pack 여부 (한 줄에 최대한 넣기)
+BinPackArguments: true
+
+# 긴 중괄호 초기화 목록 bin-pack 여부 (clang-format 21 부터 지원)
+#BinPackLongBracedList: true
+
+# 함수 선언 매개변수 bin-pack 방식
+BinPackParameters: BinPack
+
+# 실험적 bin-pack 자동 감지 여부
+ExperimentalAutoDetectBinPacking: false
+
+# ============================================================
+# 기타
+# ============================================================
+
+# C++11 중괄호 초기화 스타일 사용 (공백 없이)
+Cpp11BracedListStyle: false
+
+# enum 마지막 원소 뒤 쉼표 처리 (clang-format 21 부터 지원)
+#EnumTrailingComma: Leave
+
+# 파일 끝 개행 삽입
+InsertNewlineAtEOF: false
+
+# 후행 쉼표 삽입 방식
+InsertTrailingCommas: None
+
+# 정수 리터럴 구분자 (0 = 비활성화)
+IntegerLiteralSeparator:
+  Binary: 0           # 2진수 구분자 삽입 간격 (0 = 비활성화, 양수 = N자리마다 삽입, 음수 = 현재 유지)
+  BinaryMinDigits: 0  # 구분자를 삽입할 최소 2진수 자릿수
+  Decimal: 0          # 10진수 구분자 삽입 간격 (0 = 비활성화, 양수 = N자리마다 삽입, 음수 = 현재 유지)
+  DecimalMinDigits: 0 # 구분자를 삽입할 최소 10진수 자릿수
+  Hex: 0              # 16진수 구분자 삽입 간격 (0 = 비활성화, 양수 = N자리마다 삽입, 음수 = 현재 유지)
+  HexMinDigits: 0     # 구분자를 삽입할 최소 16진수 자릿수
+
+# LLVM 스타일 단일 구문 중괄호 제거 여부
+RemoveBracesLLVM: false
+
+# 불필요한 괄호 제거 방식
+RemoveParentheses: Leave
+
+# 불필요한 세미콜론 제거 여부
+RemoveSemicolon: false
+
+# 주석 재흐름 방식 (Always = 항상 재포맷)
+ReflowComments: Always
+
+# IWYU pragma 감지 정규식
+CommentPragmas: "^ IWYU pragma:"
