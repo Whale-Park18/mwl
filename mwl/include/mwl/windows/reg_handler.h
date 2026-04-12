@@ -4,23 +4,24 @@
 namespace mwl::windows
 {
 
-enum class reg_root : ULONG_PTR
+enum class RegRoot : ULONG_PTR
 {
-    classes_root = (ULONG_PTR)HKEY_CLASSES_ROOT,
-    current_config = (ULONG_PTR)HKEY_CURRENT_CONFIG,
-    current_user = (ULONG_PTR)HKEY_CURRENT_USER,
-    local_machine = (ULONG_PTR)HKEY_LOCAL_MACHINE,
-    users = (ULONG_PTR)HKEY_USERS,
+    kClassesRoot = (ULONG_PTR)HKEY_CLASSES_ROOT,
+    kCurrentConfig = (ULONG_PTR)HKEY_CURRENT_CONFIG,
+    kCurrentUser = (ULONG_PTR)HKEY_CURRENT_USER,
+    kLocalMachine = (ULONG_PTR)HKEY_LOCAL_MACHINE,
+    kUsers = (ULONG_PTR)HKEY_USERS,
 };
 
-template <reg_root R>
-class reg_handler
+template<RegRoot kRoot> class RegHandler
 {
 public:
-    reg_handler() = default;
+
+    RegHandler() = default;
 
 private:
-    shared_handle<hkey> hkey;
+
+    SharedHandle<Hkey> hkey_;
 };
 
 } // namespace mwl::windows

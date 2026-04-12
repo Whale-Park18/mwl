@@ -1,6 +1,5 @@
 #pragma once
 #include <Windows.h>
-#include <spdlog/spdlog.h>
 
 #include <concepts>
 #include <memory>
@@ -9,33 +8,28 @@
 namespace mwl::windows
 {
 
-using handle = HANDLE;
-using hkey = HKEY;
+using Handle = HANDLE;
+using Hkey = HKEY;
 
-template <class H>
-concept handle_type = std::same_as<handle, H> || std::same_as<hkey, H>;
+template<class HandleT>
+concept HandleType = std::same_as<Handle, HandleT> || std::same_as<Hkey, HandleT>;
 
-template <handle_type H>
-struct handle_deleter
+template<HandleType HandleT> struct HandleDeleter
 {
-    void operator()(H handle)
+    void operator()(HandleT handle)
     {
-        if constexpr (std::same_as<H, mwl::windows::handle>)
+        if constexpr (std::same_as<HandleT, mwl::windows::Handle>)
         {
             if (handle != nullptr)
             {
-                spdlog::debug("Closed handle: {}", fmt::ptr(handle));
-
                 ::CloseHandle(handle);
                 handle = nullptr;
             }
         }
-        else if (std::same_as<H, mwl::windows::hkey>)
+        else if (std::same_as<HandleT, mwl::windows::Hkey>)
         {
             if (handle != nullptr)
             {
-                spdlog::debug("Closed registry key handle: {}", fmt::ptr(handle));
-
                 ::RegCloseKey(handle);
                 handle = nullptr;
             }
@@ -43,31 +37,26 @@ struct handle_deleter
     }
 };
 
-template <handle_type H>
-using unique_handle = std::unique_ptr<std::remove_pointer_t<H>, handle_deleter<H>>;
+template<HandleType HandleT>
+using UniqueHandle = std::unique_ptr<std::remove_pointer_t<HandleT>, HandleDeleter<HandleT>>;
 
-template <handle_type H>
-using shared_handle = std::shared_ptr<std::remove_pointer_t<H>>;
+template<HandleType HandleT> using SharedHandle = std::shared_ptr<std::remove_pointer_t<HandleT>>;
 
-template <handle_type H>
-using weak_handle = std::weak_ptr<std::remove_pointer_t<H>>;
+template<HandleType HandleT> using WeakHandle = std::weak_ptr<std::remove_pointer_t<HandleT>>;
 
-template <handle_type H>
-inline unique_handle<H> make_unique_handle(H handle)
+template<HandleType HandleT> inline UniqueHandle<HandleT> MakeUniqueHandle(HandleT handle)
 {
-    return unique_handle<H>(handle);
+    return UniqueHandle<HandleT>(handle);
 }
 
-template <handle_type H>
-inline shared_handle<H> make_shared_handle(H handle)
+template<HandleType HandleT> inline SharedHandle<HandleT> MakeSharedHandle(HandleT handle)
 {
-    return shared_handle<H>(handle, handle_deleter<H>{});
+    return SharedHandle<HandleT>(handle, HandleDeleter<HandleT>{});
 }
 
-template <handle_type H>
-inline weak_handle<H> make_weak_handle(H shared_handle)
+template<HandleType HandleT> inline WeakHandle<HandleT> MakeWeakHandle(HandleT shared_handle)
 {
-    return weak_handle<H>(shared_handle);
+    return WeakHandle<HandleT>(shared_handle);
 }
 
 } // namespace mwl::windows
