@@ -19,11 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\mwl\windows\handle.h" />
-    <ClInclude Include="include\mwl\windows\reg_handler.h" />
+    <ClInclude Include="include\mwl\internal\log.h" />
+    <ClInclude Include="include\mwl\error\error.h" />
+    <ClInclude Include="include\mwl\error\result.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\error\error.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>

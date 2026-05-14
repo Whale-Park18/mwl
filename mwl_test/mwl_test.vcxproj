@@ -129,13 +129,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="include\pch.cpp" />
     <ClCompile Include="src\main_test.cpp" />
-    <ClCompile Include="src\windows\handle_test.cpp" />
-    <ClCompile Include="src\windows\reg_handler_test.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\pch.h" />
+    <ClCompile Include="src\error\error_test.cpp" />
+    <ClCompile Include="src\error\result_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

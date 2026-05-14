@@ -4,31 +4,23 @@
     <Filter Include="src">
       <UniqueIdentifier>{5bd2092e-780f-4ff1-997c-343b913296c9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include">
-      <UniqueIdentifier>{e22c5589-aac4-485f-8548-b940f1797da4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\windows">
       <UniqueIdentifier>{368453a5-f659-4089-a14c-87a2888607f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\error">
+      <UniqueIdentifier>{2e8f08e7-b091-4d78-8460-4ca7ebe443b3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main_test.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="include\pch.cpp">
-      <Filter>include</Filter>
+    <ClCompile Include="src\error\error_test.cpp">
+      <Filter>src\error</Filter>
     </ClCompile>
-    <ClCompile Include="src\windows\handle_test.cpp">
-      <Filter>src\windows</Filter>
+    <ClCompile Include="src\error\result_test.cpp">
+      <Filter>src\error</Filter>
     </ClCompile>
-    <ClCompile Include="src\windows\reg_handler_test.cpp">
-      <Filter>src\windows</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\pch.h">
-      <Filter>include</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
