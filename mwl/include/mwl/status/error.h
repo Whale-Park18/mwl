@@ -7,7 +7,7 @@
 #include <string_view>
 #include <system_error>
 
-namespace mwl::error
+namespace mwl
 {
 
 const std::error_category& hresult_category() noexcept;
@@ -73,9 +73,9 @@ private:
 
     struct ErrorPayload
     {
-        std::error_code errorCode;     // 에러 코드는 복사하여 저장
-        std::string message;           // 에러 메시지는 복사하여 저장
-        std::source_location location; // 소스 위치도 복사하여 저장
+        std::error_code errorCode;
+        std::string message;
+        std::source_location location;
     };
 
     std::unique_ptr<ErrorPayload> payload_;
@@ -104,7 +104,7 @@ Error NotSupportedError(std::string_view msg, std::source_location loc = std::so
 Error LastWindowsError(std::string_view msg, std::source_location loc = std::source_location::current());
 
 /// <summary>
-/// 마지만 WSAGetLastError() 오류를 기반으로 Error 객체를 생성합니다.
+/// 마지막 WSAGetLastError() 오류를 기반으로 Error 객체를 생성합니다.
 /// </summary>
 /// <param name="msg"></param>
 /// <param name="loc"></param>
@@ -113,4 +113,4 @@ Error LastWsaError(std::string_view msg, std::source_location loc = std::source_
 Error LstatusError(std::string_view msg, LSTATUS status, std::source_location loc = std::source_location::current());
 Error HresultError(std::string_view msg, HRESULT hr, std::source_location loc = std::source_location::current());
 
-} // namespace mwl::error
+} // namespace mwl

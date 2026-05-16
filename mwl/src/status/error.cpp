@@ -1,10 +1,10 @@
 #include <format>
 
-#include "mwl/error/error.h"
+#include "mwl/status/error.h"
 
 #pragma comment(lib, "Ws2_32.lib")
 
-namespace mwl::error
+namespace mwl
 {
 
 // ---- HresultCategory ----
@@ -182,4 +182,4 @@ Error HresultError(std::string_view msg, HRESULT hr, std::source_location loc)
     return Error(errorCode, msg, loc);
 }
 
-} // namespace mwl::error
+} // namespace mwl

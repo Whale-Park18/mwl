@@ -2,7 +2,7 @@
 
 ## 개요
 
-`mwl::error`는 C++ 예외(`throw`/`catch`) 없이 반환값 기반으로 에러를 전파하는 아키텍처다. Google Abseil의 `absl::Status`/`absl::StatusOr` 패턴과 게임 엔진(Unreal Engine, id Software)의 에러 처리 방식을 벤치마킹하여 설계했다.
+`mwl`는 C++ 예외(`throw`/`catch`) 없이 반환값 기반으로 에러를 전파하는 아키텍처다. Google Abseil의 `absl::Status`/`absl::StatusOr` 패턴과 게임 엔진(Unreal Engine, id Software)의 에러 처리 방식을 벤치마킹하여 설계했다.
 
 **설계 원칙:**
 - C++ 예외를 사용하지 않는다 — 에러는 반환값으로만 전파한다
@@ -15,11 +15,11 @@
 ## 아키텍처 구조
 
 ```
-mwl/include/mwl/error/
+mwl/include/mwl/status/
 ├── error.h       — Error 클래스, hresult_category(), 팩토리 함수 선언
 └── result.h      — Result<T> 클래스 템플릿 (헤더 전용)
 
-mwl/src/error/
+mwl/src/status/
 └── error.cpp     — HresultCategory, Error, 팩토리 함수 구현
 ```
 
@@ -59,7 +59,7 @@ mwl/src/error/
 
 ## `Error` 클래스
 
-`mwl::error::Error`는 성공 또는 에러를 나타내는 값 타입이다.
+`mwl::Error`는 성공 또는 에러를 나타내는 값 타입이다.
 
 ### 내부 구조
 
@@ -163,7 +163,7 @@ HRESULT hr
 
 ## `Result<T>` 클래스 템플릿
 
-`mwl::error::Result<T>`는 값 `T` 또는 에러 `Error`를 보유하는 타입이다.  
+`mwl::Result<T>`는 값 `T` 또는 에러 `Error`를 보유하는 타입이다.  
 C++23의 `std::expected<T, E>`에 대응하며, `std::variant<T, Error>`로 구현한다.
 
 ### 주요 인터페이스
@@ -200,13 +200,13 @@ public:
 ### 상위 레이어 — 입력 검증
 
 ```cpp
-mwl::error::Error ValidatePath(std::string_view path)
+mwl::Error ValidatePath(std::string_view path)
 {
     if (path.empty())
-        return mwl::error::InvalidArgumentError("path must not be empty");
+        return mwl::InvalidArgumentError("path must not be empty");
     if (path.size() > MAX_PATH)
-        return mwl::error::InvalidArgumentError("path exceeds MAX_PATH");
-    return mwl::error::NoError();
+        return mwl::InvalidArgumentError("path exceeds MAX_PATH");
+    return mwl::NoError();
 }
 
 // 호출
@@ -220,12 +220,12 @@ if (auto e = ValidatePath(user_input); !e.ok())
 ### 하위 레이어 — GetLastError
 
 ```cpp
-mwl::error::Result<mwl::windows::UniqueHandle<HANDLE>>
+mwl::Result<mwl::windows::UniqueHandle<HANDLE>>
     OpenProcessHandle(DWORD pid)
 {
     HANDLE h = ::OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, pid);
     if (h == nullptr)
-        return mwl::error::LastWindowsError("OpenProcess failed");
+        return mwl::LastWindowsError("OpenProcess failed");
     return mwl::windows::MakeUniqueHandle(h);
 }
 
@@ -242,13 +242,13 @@ auto& handle = result.value();
 ### 하위 레이어 — LSTATUS
 
 ```cpp
-mwl::error::Result<mwl::windows::UniqueHandle<HKEY>>
+mwl::Result<mwl::windows::UniqueHandle<HKEY>>
     OpenRegKey(HKEY root, std::wstring_view sub_key)
 {
     HKEY key = nullptr;
     LSTATUS st = ::RegOpenKeyExW(root, sub_key.data(), 0, KEY_READ, &key);
     if (st != ERROR_SUCCESS)
-        return mwl::error::LstatusError("RegOpenKeyExW failed", st);
+        return mwl::LstatusError("RegOpenKeyExW failed", st);
     return mwl::windows::MakeUniqueHandle(key);
 }
 ```
@@ -256,22 +256,22 @@ mwl::error::Result<mwl::windows::UniqueHandle<HKEY>>
 ### 하위 레이어 — HRESULT (COM)
 
 ```cpp
-mwl::error::Error InitializeCom()
+mwl::Error InitializeCom()
 {
     HRESULT hr = ::CoInitializeEx(nullptr, COINIT_MULTITHREADED);
     // SUCCEEDED(hr)이면 내부적으로 NoError() 반환
-    return mwl::error::HresultError("CoInitializeEx failed", hr);
+    return mwl::HresultError("CoInitializeEx failed", hr);
 }
 ```
 
 ### 에러 전파
 
 ```cpp
-mwl::error::Error DoWork()
+mwl::Error DoWork()
 {
     if (auto e = Step1(); !e.ok()) return e;
     if (auto e = Step2(); !e.ok()) return e;
-    return mwl::error::NoError();
+    return mwl::NoError();
 }
 ```
 
@@ -283,8 +283,8 @@ mwl::error::Error DoWork()
 
 ```cpp
 // error_category 비교
-e.code().category() == std::system_category()   // Win32 / FACILITY_WIN32 HRESULT
-e.code().category() == mwl::error::hresult_category()  // 순수 COM HRESULT
+e.code().category() == std::system_category()    // Win32 / FACILITY_WIN32 HRESULT
+e.code().category() == mwl::hresult_category()   // 순수 COM HRESULT
 ```
 
 ---

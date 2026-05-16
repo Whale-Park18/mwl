@@ -20,11 +20,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\mwl\internal\log.h" />
-    <ClInclude Include="include\mwl\error\error.h" />
-    <ClInclude Include="include\mwl\error\result.h" />
+    <ClInclude Include="include\mwl\status\error.h" />
+    <ClInclude Include="include\mwl\status\result.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\error\error.cpp" />
+    <ClCompile Include="src\status\error.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>

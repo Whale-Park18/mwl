@@ -2,9 +2,9 @@
 #include <cassert>
 #include <variant>
 
-#include "mwl/error/error.h"
+#include "mwl/status/error.h"
 
-namespace mwl::error
+namespace mwl
 {
 
 /// <summary>
@@ -80,4 +80,4 @@ private:
     std::variant<T, Error> data_;
 };
 
-} // namespace mwl::error
+} // namespace mwl
