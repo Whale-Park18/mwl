@@ -383,7 +383,7 @@ QualifierAlignment: Leave
 #BreakBeforeTemplateCloser: false
 
 # template 선언 줄 바꿈 방식
-BreakTemplateDeclarations: MultiLine
+BreakTemplateDeclarations: Yes
 
 # concept 선언 앞 줄 바꿈
 BreakBeforeConceptDeclarations: Always

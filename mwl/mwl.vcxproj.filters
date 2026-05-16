@@ -16,24 +16,30 @@
     <Filter Include="include\mwl">
       <UniqueIdentifier>{6fee1080-fdef-4c5a-a468-7eaebae5b506}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\mwl\windows">
-      <UniqueIdentifier>{29cf7595-3745-4b12-8476-5fe9c871e8d0}</UniqueIdentifier>
+    <Filter Include="include\mwl\internal">
+      <UniqueIdentifier>{d5e7c9a1-f2b4-4e8c-9d1e-3f5a7c9b0e2d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\mwl\common">
-      <UniqueIdentifier>{65f6e84e-4983-45b2-b772-de8a4f26ddab}</UniqueIdentifier>
+    <Filter Include="src\status">
+      <UniqueIdentifier>{b2d4f6a8-c3e5-4f7b-9d1f-2e4c6a8b0d3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\mwl\status">
+      <UniqueIdentifier>{a1c3e5f7-b2d4-4e6a-8c0e-1f3a5b7c9d2e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\mwl\windows\reg_handler.h">
-      <Filter>include\mwl\windows</Filter>
+    <ClInclude Include="include\mwl\internal\log.h">
+      <Filter>include\mwl\internal</Filter>
     </ClInclude>
-    <ClInclude Include="include\mwl\windows\handle.h">
-      <Filter>include\mwl\windows</Filter>
+    <ClInclude Include="include\mwl\status\error.h">
+      <Filter>include\mwl\status</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mwl\status\result.h">
+      <Filter>include\mwl\status</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="src\status\error.cpp">
+      <Filter>src\status</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
