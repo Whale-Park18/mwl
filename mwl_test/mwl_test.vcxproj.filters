@@ -7,7 +7,7 @@
     <Filter Include="src\windows">
       <UniqueIdentifier>{368453a5-f659-4089-a14c-87a2888607f5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\error">
+    <Filter Include="src\status">
       <UniqueIdentifier>{2e8f08e7-b091-4d78-8460-4ca7ebe443b3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -15,11 +15,11 @@
     <ClCompile Include="src\main_test.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\error\error_test.cpp">
-      <Filter>src\error</Filter>
+    <ClCompile Include="src\status\error_test.cpp">
+      <Filter>src\status</Filter>
     </ClCompile>
-    <ClCompile Include="src\error\result_test.cpp">
-      <Filter>src\error</Filter>
+    <ClCompile Include="src\status\result_test.cpp">
+      <Filter>src\status</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
