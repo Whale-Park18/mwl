@@ -1,9 +1,8 @@
-#include "gtest/gtest.h"
-
 #include <Windows.h>
 
 #include <system_error>
 
+#include "gtest/gtest.h"
 #include "mwl/status/error.h"
 
 static_assert(sizeof(mwl::Error) == sizeof(void*), "Error must be pointer-sized");

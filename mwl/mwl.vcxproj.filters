@@ -25,6 +25,12 @@
     <Filter Include="include\mwl\status">
       <UniqueIdentifier>{a1c3e5f7-b2d4-4e6a-8c0e-1f3a5b7c9d2e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\mwl\windows">
+      <UniqueIdentifier>{cd48a000-d397-45a5-8ba1-346b9ccf6aa1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\mwl\windows\handle">
+      <UniqueIdentifier>{6bfaf842-f493-46ab-b2db-301b0995f223}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\mwl\internal\log.h">
@@ -35,6 +41,18 @@
     </ClInclude>
     <ClInclude Include="include\mwl\status\result.h">
       <Filter>include\mwl\status</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mwl\windows\handle\registry_handle.h">
+      <Filter>include\mwl\windows\handle</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mwl\windows\handle\kernel_handle.h">
+      <Filter>include\mwl\windows\handle</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mwl\windows\handle\handle_view.h">
+      <Filter>include\mwl\windows\handle</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mwl\windows\handle\unique_handle.h">
+      <Filter>include\mwl\windows\handle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

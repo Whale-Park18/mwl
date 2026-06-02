@@ -10,6 +10,9 @@
     <Filter Include="src\status">
       <UniqueIdentifier>{2e8f08e7-b091-4d78-8460-4ca7ebe443b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\windows\handle">
+      <UniqueIdentifier>{fd79b33b-8ec3-485e-bec0-d0fcdb793870}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main_test.cpp">
@@ -20,6 +23,12 @@
     </ClCompile>
     <ClCompile Include="src\status\result_test.cpp">
       <Filter>src\status</Filter>
+    </ClCompile>
+    <ClCompile Include="src\windows\handle\unique_handle_test.cpp">
+      <Filter>src\windows\handle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\windows\handle\handle_view_test.cpp">
+      <Filter>src\windows\handle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

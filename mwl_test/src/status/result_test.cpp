@@ -1,8 +1,7 @@
-#include "gtest/gtest.h"
-
 #include <memory>
 #include <string>
 
+#include "gtest/gtest.h"
 #include "mwl/status/result.h"
 
 TEST(Result, ValueConstructOk)

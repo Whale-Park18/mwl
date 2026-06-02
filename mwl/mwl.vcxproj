@@ -22,6 +22,10 @@
     <ClInclude Include="include\mwl\internal\log.h" />
     <ClInclude Include="include\mwl\status\error.h" />
     <ClInclude Include="include\mwl\status\result.h" />
+    <ClInclude Include="include\mwl\windows\handle\handle_view.h" />
+    <ClInclude Include="include\mwl\windows\handle\kernel_handle.h" />
+    <ClInclude Include="include\mwl\windows\handle\registry_handle.h" />
+    <ClInclude Include="include\mwl\windows\handle\unique_handle.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\status\error.cpp" />

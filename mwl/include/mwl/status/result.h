@@ -25,7 +25,8 @@ public:
     }
 
     /// <summary>
-    /// 오류 상태를 가진 Result 객체를 생성합니다. 전달된 Error를 내부로 이동하고, 이동된 오류가 정상 상태(ok)가 아님을 확인합니다.
+    /// 오류 상태를 가진 Result 객체를 생성합니다. 전달된 Error를 내부로 이동하고, 이동된 오류가 정상 상태(ok)가 아님을
+    /// 확인합니다.
     /// </summary>
     /// <param name="error">이동될 Error 객체. 내부 data_로 이동되어 Result가 이 오류를 보유합니다.</param>
     Result(Error error) : data_(std::move(error))

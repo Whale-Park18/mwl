@@ -132,6 +132,8 @@
     <ClCompile Include="src\main_test.cpp" />
     <ClCompile Include="src\status\error_test.cpp" />
     <ClCompile Include="src\status\result_test.cpp" />
+    <ClCompile Include="src\windows\handle\handle_view_test.cpp" />
+    <ClCompile Include="src\windows\handle\unique_handle_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
