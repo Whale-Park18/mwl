@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-
 #include <mwl/windows/handle/handle_view.h>
 #include <mwl/windows/handle/unique_handle.h>
 
@@ -53,6 +52,14 @@ TEST_F(HandleViewTest, DefaultConstruction_IsInvalid)
 
     EXPECT_FALSE(static_cast<bool>(v));
     EXPECT_EQ(v.Get(), TestTraits::Empty());
+}
+
+TEST_F(HandleViewTest, ConstructFromValidHandle_IsValid)
+{
+    TestView v(42);
+
+    EXPECT_TRUE(static_cast<bool>(v));
+    EXPECT_EQ(v.Get(), 42);
 }
 
 TEST_F(HandleViewTest, ConstructFromValidUniqueHandle_IsValid)

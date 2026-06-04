@@ -2,6 +2,7 @@
 #include <Windows.h>
 
 #include "unique_handle.h"
+#include "handle_view.h"
 
 namespace mwl::windows::handle
 {
@@ -34,5 +35,6 @@ struct RegistryHandleTraits
 };
 
 using UniqueRegistryHandle = UniqueHandle<RegistryHandleTraits>;
+using RegistryHandleView = HandleView<RegistryHandleTraits>;
 
 } // namespace mwl::windows::handle
