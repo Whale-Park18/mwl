@@ -44,11 +44,11 @@ public:
 
     HandleView() noexcept = default;
 
-    explicit HandleView(Handle handle) noexcept : handle_(handle)
+    HandleView(Handle handle) noexcept : handle_(handle)
     {
     }
 
-    explicit HandleView(const UniqueHandle<Traits>& handle) noexcept : handle_(handle.Get())
+    HandleView(const UniqueHandle<Traits>& handle) noexcept : handle_(handle.Get())
     {
     }
 

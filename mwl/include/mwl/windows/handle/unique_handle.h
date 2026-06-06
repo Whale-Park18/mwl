@@ -44,7 +44,7 @@ public:
 
     UniqueHandle() noexcept = default;
 
-    explicit UniqueHandle(Handle handle) noexcept : handle_(handle)
+    UniqueHandle(Handle handle) noexcept : handle_(handle)
     {
     }
 
