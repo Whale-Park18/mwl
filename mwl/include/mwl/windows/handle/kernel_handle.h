@@ -1,8 +1,8 @@
 #pragma once
 #include <Windows.h>
 
-#include "unique_handle.h"
 #include "handle_view.h"
+#include "unique_handle.h"
 
 namespace mwl::windows::handle
 {
