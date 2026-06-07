@@ -26,9 +26,11 @@
     <ClInclude Include="include\mwl\windows\handle\kernel_handle.h" />
     <ClInclude Include="include\mwl\windows\handle\registry_handle.h" />
     <ClInclude Include="include\mwl\windows\handle\unique_handle.h" />
+    <ClInclude Include="include\mwl\windows\registry\registry.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\status\error.cpp" />
+    <ClCompile Include="src\windows\registry\registry.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>

@@ -31,6 +31,15 @@
     <Filter Include="include\mwl\windows\handle">
       <UniqueIdentifier>{6bfaf842-f493-46ab-b2db-301b0995f223}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\mwl\windows\registry">
+      <UniqueIdentifier>{530adf8a-bdde-4852-9506-e7cd720f8746}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\windows">
+      <UniqueIdentifier>{3761b38a-ba03-4122-82a2-301eca515c5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\windows\registry">
+      <UniqueIdentifier>{0506d94b-6d53-42e4-8111-4de3ad85fa7d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\mwl\internal\log.h">
@@ -54,10 +63,16 @@
     <ClInclude Include="include\mwl\windows\handle\unique_handle.h">
       <Filter>include\mwl\windows\handle</Filter>
     </ClInclude>
+    <ClInclude Include="include\mwl\windows\registry\registry.h">
+      <Filter>include\mwl\windows\registry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\status\error.cpp">
       <Filter>src\status</Filter>
+    </ClCompile>
+    <ClCompile Include="src\windows\registry\registry.cpp">
+      <Filter>src\windows\registry</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

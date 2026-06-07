@@ -13,6 +13,9 @@
     <Filter Include="src\windows\handle">
       <UniqueIdentifier>{fd79b33b-8ec3-485e-bec0-d0fcdb793870}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\windows\registry">
+      <UniqueIdentifier>{18a4f83b-0348-49fe-ab0e-b482ad91bdde}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main_test.cpp">
@@ -29,6 +32,9 @@
     </ClCompile>
     <ClCompile Include="src\windows\handle\handle_view_test.cpp">
       <Filter>src\windows\handle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\windows\registry\registry_test.cpp">
+      <Filter>src\windows\registry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
