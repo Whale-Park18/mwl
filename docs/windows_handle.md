@@ -66,7 +66,7 @@ struct ExampleTraits
 | 멤버 | 설명 |
 |---|---|
 | `UniqueHandle()` | 빈 상태(`Traits::Empty()`)로 기본 생성 |
-| `explicit UniqueHandle(Handle h)` | 핸들을 소유하며 생성 |
+| `UniqueHandle(Handle h)` | 핸들을 소유하며 생성 (암묵적 변환 허용) |
 | `explicit operator bool()` | `Traits::IsValid(handle_)` |
 | `explicit operator Handle()` | 내부 핸들 값으로 변환 |
 | `Handle Get()` | 내부 핸들 값 반환 |
@@ -87,12 +87,15 @@ struct ExampleTraits
 | 멤버 | 설명 |
 |---|---|
 | `HandleView()` | 빈 상태(`Traits::Empty()`)로 기본 생성 |
-| `explicit HandleView(const UniqueHandle<Traits>& h)` | `UniqueHandle`로부터 생성 |
+| `HandleView(Handle h)` | 핸들 값으로부터 생성 (암묵적 변환 허용) |
+| `HandleView(const UniqueHandle<Traits>& h)` | `UniqueHandle`로부터 생성 (암묵적 변환 허용) |
 | `explicit operator bool()` | `Traits::IsValid(handle_)` |
 | `explicit operator Handle()` | 내부 핸들 값으로 변환 |
 | `Handle Get()` | 내부 핸들 값 반환 |
 
 `HandleView`는 원본 `UniqueHandle`의 수명 안에서만 유효하다. 함수 매개변수 전달 전용으로 설계되었으며, 저장하거나 반환해서는 안 된다.
+
+생성자가 `explicit`이 아니므로, `HandleView`를 받는 함수에 원시 핸들 값(`HKEY_CURRENT_USER` 등)이나 `UniqueHandle`을 별도 변환 없이 그대로 넘길 수 있다.
 
 ---
 
@@ -177,9 +180,9 @@ mwl::Result<std::wstring> QueryImageName(HandleView<KernelHandleTraits> process)
     return std::wstring(buf, size);
 }
 
-// 호출: UniqueKernelHandle → HandleView 명시적 변환
+// 호출: UniqueKernelHandle → HandleView 암묵적 변환 (생성자가 explicit이 아님)
 UniqueKernelHandle process(raw);
-auto name = QueryImageName(HandleView<KernelHandleTraits>(process));
+auto name = QueryImageName(process);
 ```
 
 ### 레지스트리 키 — `UniqueRegistryHandle`

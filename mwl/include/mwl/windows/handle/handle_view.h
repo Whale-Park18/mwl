@@ -44,7 +44,11 @@ public:
 
     HandleView() noexcept = default;
 
-    explicit HandleView(const UniqueHandle<Traits>& handle) noexcept : handle_(handle.Get())
+    HandleView(Handle handle) noexcept : handle_(handle)
+    {
+    }
+
+    HandleView(const UniqueHandle<Traits>& handle) noexcept : handle_(handle.Get())
     {
     }
 

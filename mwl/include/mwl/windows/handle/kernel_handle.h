@@ -1,6 +1,7 @@
 #pragma once
 #include <Windows.h>
 
+#include "handle_view.h"
 #include "unique_handle.h"
 
 namespace mwl::windows::handle
@@ -36,5 +37,6 @@ struct KernelHandleTraits
 };
 
 using UniqueKernelHandle = UniqueHandle<KernelHandleTraits>;
+using KernelHandleView = HandleView<KernelHandleTraits>;
 
 } // namespace mwl::windows::handle
