@@ -81,4 +81,47 @@ private:
     std::variant<T, Error> data_;
 };
 
+/// <summary>
+/// 반환할 값이 없는 연산의 결과 타입. 성공 시 값을 보유하지 않고, 실패 시 Error를 저장한다.
+/// </summary>
+template<>
+class Result<void>
+{
+public:
+
+    /// <summary>
+    /// 성공(값 없음) 상태의 Result를 생성합니다.
+    /// </summary>
+    Result() = default;
+
+    /// <summary>
+    /// 오류 상태의 Result를 생성합니다. 전달된 Error가 정상 상태(ok)가 아님을 확인합니다.
+    /// </summary>
+    /// <param name="error">이동될 Error 객체.</param>
+    Result(Error error) : error_(std::move(error))
+    {
+        assert(!error_.ok());
+    }
+
+    bool ok() const noexcept
+    {
+        return error_.ok();
+    }
+
+    explicit operator bool() const noexcept
+    {
+        return ok();
+    }
+
+    const Error& error() const noexcept
+    {
+        assert(!ok());
+        return error_;
+    }
+
+private:
+
+    Error error_;
+};
+
 } // namespace mwl

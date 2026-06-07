@@ -193,6 +193,40 @@ public:
 
 `T`가 이동 전용(`std::unique_ptr` 등)이면, `Result<T>`도 이동 전용이 된다 — `std::variant`의 자동 처리.
 
+### `Result<void>` 특수화
+
+반환할 값이 없는(부수효과만 있는) 연산을 위한 명시적 특수화다. `std::variant<void, Error>`는 성립하지 않으므로, 내부에 `Error` 하나만 보관한다. 성공 상태는 `Error`의 기본 생성(`ok()`)으로 표현하며, `value()`는 제공하지 않는다.
+
+```cpp
+template<>
+class Result<void>
+{
+public:
+    Result();              // 성공 상태 (값 없음)
+    Result(Error error);   // 에러 보유 — 전제: !error.ok()
+
+    bool ok() const noexcept;
+    explicit operator bool() const noexcept;
+
+    const Error& error() const noexcept;  // 전제: !ok()
+    // value() 없음
+};
+```
+
+성공을 반환할 때는 `return {};`로 작성한다 (반환 타입이 클래스이므로 `return;`은 사용할 수 없다).
+
+```cpp
+mwl::Result<void> DeleteRegistryKey(HKEY root, std::wstring_view sub_key)
+{
+    LSTATUS st = ::RegDeleteKeyW(root, sub_key.data());
+    if (st != ERROR_SUCCESS)
+        return mwl::LstatusError("RegDeleteKeyW failed", st);
+    return {};  // 성공
+}
+```
+
+`Result<void>`는 "성공/실패 + 실패 시 상세 오류"가 필요하지만 반환할 값은 없는 연산에 쓴다. 단순히 성공/실패만 알면 충분하다면 `Error`를 직접 반환해도 된다.
+
 ---
 
 ## 사용 예시
