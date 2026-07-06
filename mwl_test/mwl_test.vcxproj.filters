@@ -36,6 +36,9 @@
     <ClCompile Include="src\windows\registry\registry_test.cpp">
       <Filter>src\windows\registry</Filter>
     </ClCompile>
+    <ClCompile Include="src\windows\registry\value_test.cpp">
+      <Filter>src\windows\registry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
