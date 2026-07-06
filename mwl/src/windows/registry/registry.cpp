@@ -1,10 +1,13 @@
 #include <Windows.h>
 
+#include <array>
 #include <format>
+#include <span>
 #include <vector>
 
 #include "mwl/status/error.h"
 #include "mwl/status/result.h"
+#include "mwl/windows/definition.h"
 #include "mwl/windows/registry/registry.h"
 
 #ifdef _DEBUG
@@ -20,8 +23,8 @@
 namespace mwl::windows::registry
 {
 
-Result<handle::UniqueRegistryHandle> CreateKey(handle::RegistryHandleView key, std::wstring_view subkey, DWORD options,
-                                               DWORD desired)
+Result<handle::UniqueRegistryHandle> CreateKey(handle::RegistryHandleView key, std::wstring_view subkey, Dword options,
+                                               Dword desired)
 {
     HKEY rawHandle{ nullptr };
     LSTATUS status = RegCreateKeyExW(key.Get(),     // 키 핸들
@@ -43,7 +46,7 @@ Result<handle::UniqueRegistryHandle> CreateKey(handle::RegistryHandleView key, s
     return LstatusError("Failed to create registry key", status);
 }
 
-Result<handle::UniqueRegistryHandle> OpenKey(handle::RegistryHandleView key, std::wstring_view subkey, DWORD desired)
+Result<handle::UniqueRegistryHandle> OpenKey(handle::RegistryHandleView key, std::wstring_view subkey, Dword desired)
 {
     HKEY rawHandle{ nullptr };
     LSTATUS status = RegOpenKeyExW(key.Get(),     // 키 핸들
@@ -77,7 +80,7 @@ Result<void> DeleteKey(handle::RegistryHandleView key, std::wstring_view subkey)
 
 Result<std::wstring> ReadString(handle::RegistryHandleView key, std::wstring_view subKey, std::wstring_view valueName)
 {
-    DWORD size{ 0 };
+    Dword size{ 0 };
 
     // 1차 호출: 필요한 버퍼 크기 획득
     LSTATUS status = RegGetValueW(key.Get(),        // 키 핸들
@@ -105,10 +108,10 @@ Result<std::wstring> ReadString(handle::RegistryHandleView key, std::wstring_vie
     return LstatusError("Failed to read registry REG_SZ value", status);
 }
 
-Result<DWORD> ReadDword(handle::RegistryHandleView key, std::wstring_view subKey, std::wstring_view valueName)
+Result<Dword> ReadDword(handle::RegistryHandleView key, std::wstring_view subKey, std::wstring_view valueName)
 {
-    DWORD value{ 0 };
-    DWORD size{ sizeof(DWORD) };
+    Dword value{ 0 };
+    Dword size{ sizeof(Dword) };
     LSTATUS status = RegGetValueW(key.Get(),        // 키 핸들
                                   subKey.data(),    // 서브 키
                                   valueName.data(), // 값 이름
@@ -129,7 +132,7 @@ Result<DWORD> ReadDword(handle::RegistryHandleView key, std::wstring_view subKey
 Result<DWORD64> ReadQword(handle::RegistryHandleView key, std::wstring_view subKey, std::wstring_view valueName)
 {
     DWORD64 value{ 0 };
-    DWORD size{ sizeof(DWORD64) };
+    Dword size{ sizeof(Qword) };
     LSTATUS status = RegGetValueW(key.Get(),        // 키 핸들
                                   subKey.data(),    // 서브 키
                                   valueName.data(), // 값 이름
@@ -216,6 +219,105 @@ Result<void> DeleteValue(handle::RegistryHandleView key, std::wstring_view value
     }
 
     return LstatusError("Failed to delete registry value", status);
+}
+
+Result<std::vector<std::wstring>> EnumSubKeys(handle::RegistryHandleView key)
+{
+    std::vector<std::wstring> subKeys{};
+    Dword index{ 0 };
+
+    while (true)
+    {
+        std::array<wchar_t, 256> buffer{}; // 키 이름은 255자까지 허용되므로, 256으로 충분히 큰 버퍼를 사용합니다.
+        Dword bufferSize{ static_cast<Dword>(buffer.size()) };
+
+        LSTATUS status = RegEnumKeyExW(key.Get(),     // 키 핸들
+                                       index,         // 인덱스
+                                       buffer.data(), // 서브 키 이름을 받을 버퍼
+                                       &bufferSize,   // 버퍼 크기 (문자 수 단위)
+                                       nullptr,       // 예약된 값
+                                       nullptr,       // 클래스 문자열을 받을 버퍼 (레거시 옵션)
+                                       nullptr,       // 클래스 문자열 버퍼 크기를 받을 포인터 (레거시 옵션)
+                                       nullptr        // 마지막 수정 시간 정보를 받을 포인터 (옵션)
+        );
+
+        if (status == ERROR_NO_MORE_ITEMS)
+        {
+            break;
+        }
+
+        if (status != ERROR_SUCCESS)
+        {
+            return LstatusError("Failed to enumerate registry subkeys", status);
+        }
+
+        subKeys.emplace_back(buffer.data());
+        ++index;
+    }
+
+    return subKeys;
+}
+
+Result<std::vector<Value>> EnumValues(handle::RegistryHandleView key, std::wstring_view subKey)
+{
+    Dword maxNameLength{ 0 };
+    Dword maxDataSize{ 0 };
+    LSTATUS status = RegQueryInfoKeyW(key.Get(), // 키 핸들
+                                      nullptr,   // 클래스 이름을 받을 버퍼 (레거시)
+                                      nullptr,   // 버퍼 크기 (문자 수) / 실제 클래스 이름 길이를 받을 포인터 (레거시)
+                                      nullptr,   // 예약된 값
+                                      nullptr,   // 하위 키 수를 받을 포인터
+                                      nullptr,   // 하위 키 이름 중 최대 길이 (문자 수, null 제외)를 받을 포인터
+                                      nullptr,   // 하위 키 클래스 이름 중 최대 길이 (문자 수)를 받을 포인터 (레거시)
+                                      nullptr,   // 값 항목 수를 받을 포인터
+                                      &maxNameLength, // 값 이름 중 최대 길이 (문자 수, null 제외)를 받을 포인터
+                                      &maxDataSize,   // 값 데이터 중 최대 크기 (바이트 수)를 받을 포인터
+                                      nullptr,        // 보안 디스크립터 크기 (바이트 수)를 받을 포인터
+                                      nullptr         // 마지막 수정 시각을 받을 FILETIME 포인터
+    );
+
+    if (status != ERROR_SUCCESS)
+    {
+        return LstatusError("Failed to query registry key info", status);
+    }
+
+    std::vector<Value> values{};
+    Dword index{ 0 };
+
+    while (true)
+    {
+        std::vector<wchar_t> nameBuffer(maxNameLength + 1); // 값 이름 버퍼
+        Binary dataBuffer(maxDataSize + 1);                 // 값 데이터 버퍼
+        Dword type{};
+        Dword nameLength{ maxNameLength + 1 }; // RegEnumValueW가 실제 기록한 크기로 줄이므로 매 반복마다 재설정
+        Dword dataSize{ maxDataSize + 1 };     // RegEnumValueW가 실제 기록한 크기로 줄이므로 매 반복마다 재설정
+
+        status = RegEnumValueW(key.Get(),         // 키 핸들
+                               index,             // 인덱스
+                               nameBuffer.data(), // 값 이름을 받을 버퍼
+                               &nameLength,       // 값 이름 버퍼 크기
+                               nullptr,           // 예약된 값
+                               &type,             // 값 유형을 받을 포인터 (nullptr이면 유형을 가져오지 않음)
+                               dataBuffer.data(), // 값 데이터를 받을 버퍼 (nullptr이면 데이터를 가져오지 않음)
+                               &dataSize // 값 데이터 버퍼 크기를 받을 포인터 (nullptr이면 크기를 가져오지 않음)
+        );
+
+        if (status == ERROR_NO_MORE_ITEMS)
+        {
+            break;
+        }
+
+        if (status != ERROR_SUCCESS)
+        {
+            return LstatusError("Failed to enumerate registry values", status);
+        }
+
+        values.emplace_back(nameBuffer.data(), static_cast<ValueType>(type),
+                            std::span<const Byte>(dataBuffer.data(), dataSize));
+        ++index;
+    }
+
+    return values;
 }
 
 } // namespace mwl::windows::registry

@@ -2,11 +2,14 @@
 
 #include <Windows.h>
 
+#include <string>
 #include <string_view>
+#include <vector>
 
 #include "..\..\status\result.h"
 #include "..\handle\handle_view.h"
 #include "..\handle\registry_handle.h"
+#include "value.h"
 
 namespace mwl::windows::registry
 {
@@ -112,5 +115,16 @@ namespace mwl::windows::registry
 /// <param name="valueName">삭제할 값의 이름.</param>
 /// <returns>성공 시 값 없는 Result, 실패 시 Error.</returns>
 [[nodiscard]] Result<void> DeleteValue(handle::RegistryHandleView key, std::wstring_view valueName);
+
+#define TEST_ENUM_CALLBACKS 1
+#if TEST_ENUM_CALLBACKS
+
+// 키 나열
+[[nodiscard]] Result<std::vector<std::wstring>> EnumSubKeys(handle::RegistryHandleView key);
+
+// 값 나열
+[[nodiscard]] Result<std::vector<Value>> EnumValues(handle::RegistryHandleView key, std::wstring_view subKey);
+
+#endif
 
 } // namespace mwl::windows::registry

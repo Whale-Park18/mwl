@@ -66,12 +66,21 @@
     <ClInclude Include="include\mwl\windows\registry\registry.h">
       <Filter>include\mwl\windows\registry</Filter>
     </ClInclude>
+    <ClInclude Include="include\mwl\windows\registry\value.h">
+      <Filter>include\mwl\windows\registry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mwl\windows\definition.h">
+      <Filter>include\mwl\windows</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\status\error.cpp">
       <Filter>src\status</Filter>
     </ClCompile>
     <ClCompile Include="src\windows\registry\registry.cpp">
+      <Filter>src\windows\registry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\windows\registry\value.cpp">
       <Filter>src\windows\registry</Filter>
     </ClCompile>
   </ItemGroup>

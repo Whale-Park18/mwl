@@ -9,6 +9,7 @@ Windows 레지스트리 키/값을 다루는 `Reg*` WinAPI를 얇게 감싼 자�
 - 부모 키는 `RegistryHandleView`로 받아, `HKEY` 상수(`HKEY_CURRENT_USER` 등)나 `UniqueRegistryHandle`을 그대로 넘길 수 있다
 - 모든 함수는 성공 값 또는 오류를 담은 `Result<T>` / `Result<void>`를 반환한다 (예외를 던지지 않음) — [error_handling_architecture.md](error_handling_architecture.md) 참조
 - 모든 함수에 `[[nodiscard]]`가 붙어 반환된 결과를 무시할 수 없다
+- 값은 `Value`/`ValueType`으로 표현하며, 여러 타입을 동일 컨테이너(`std::vector<Value>`)에 담을 수 있다 — [windows_registry_value.md](windows_registry_value.md) 참조
 
 ---
 
@@ -61,7 +62,16 @@ mwl/src/windows/registry/
 | `Result<void> WriteString(key, subKey, valueName, wstring_view data)` | `RegSetKeyValueW` (`REG_SZ`) | `REG_SZ` 문자열을 쓴다. 널 종료 문자를 포함해 기록한다. |
 | `Result<void> DeleteValue(key, valueName)` | `RegDeleteValueW` | `key` 바로 아래의 값을 삭제한다. (`subKey` 인자 없음) |
 
+### 열거
+
+| 함수 | WinAPI | 설명 |
+|---|---|---|
+| `Result<std::vector<std::wstring>> EnumSubKeys(key)` | `RegEnumKeyExW` | `key` 바로 아래의 서브 키 이름을 모두 나열한다. |
+| `Result<std::vector<Value>> EnumValues(key, subKey)` | `RegQueryInfoKeyW` + `RegEnumValueW` | `key` 바로 아래의 모든 값을 타입별로 `Value`에 담아 나열한다 — [windows_registry_value.md](windows_registry_value.md) 참조. |
+
 > 매개변수 `key`의 타입은 모두 `handle::RegistryHandleView`이다.
+
+> **알려진 제한:** `EnumValues`의 `subKey` 매개변수는 현재 구현에서 사용되지 않는다 — 항상 `key` 자체에 대해 `RegQueryInfoKeyW`/`RegEnumValueW`를 호출하므로, 비어 있지 않은 `subKey`를 넘겨도 무시된다 (다른 값 함수처럼 `subKey` 아래로 내려가지 않음). 별도 이슈로 추적한다.
 
 ---
 
@@ -135,6 +145,22 @@ reg::DeleteKey(RegistryHandleView{ HKEY_CURRENT_USER }, L"SOFTWARE\\MyApp"); // 
 ```
 
 > `DeleteKey`는 하위 서브 키가 없는 키만 삭제한다. 하위 트리를 통째로 지우려면 `RegDeleteTree`를 별도로 감싸야 한다(현재 미제공).
+
+### 값 열거
+
+```cpp
+auto values = reg::EnumValues(key, L"");
+if (!values.ok())
+    return values.error();
+
+for (const Value& value : values.value())
+{
+    if (value.type() == ValueType::Dword)
+        std::wcout << value.name() << L" = " << value.data<Dword>() << L'\n';
+}
+```
+
+> `Value`의 타입별 분기 처리는 [windows_registry_value.md](windows_registry_value.md)의 `EnumValues` 결과 순회 예시를 참조한다.
 
 ---
 
