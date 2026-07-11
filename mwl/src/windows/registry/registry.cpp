@@ -189,12 +189,19 @@ Result<void> WriteQword(handle::RegistryHandleView key, StringView subKey, Strin
 
 Result<void> WriteString(handle::RegistryHandleView key, StringView subKey, StringView valueName, StringView data)
 {
-    LSTATUS status = RegSetKeyValueW(key.Get(),                                              // 부모 키의 핸들
-                                     subKey.data(),                                          // 서브 키
-                                     valueName.data(),                                       // 값 이름
-                                     REG_SZ,                                                 // 데이터 유형
-                                     data.data(),                                            // 데이터 버퍼
-                                     static_cast<DWORD>((data.size() + 1) * sizeof(wchar_t)) // 데이터 크기
+    // REG_SZ 값은 null 종료 문자를 포함해야 하므로, data에 null 종료 문자가 없으면 추가합니다.
+    String buffer{ data };
+    if (buffer.empty() || buffer.back() != L'\0')
+    {
+        buffer.push_back(L'\0'); // null 종료 문자를 추가합니다.
+    }
+
+    LSTATUS status = RegSetKeyValueW(key.Get(),                                            // 부모 키의 핸들
+                                     subKey.data(),                                        // 서브 키
+                                     valueName.data(),                                     // 값 이름
+                                     REG_SZ,                                               // 데이터 유형
+                                     buffer.data(),                                        // 데이터 버퍼
+                                     static_cast<Dword>((buffer.size()) * sizeof(wchar_t)) // 데이터 크기
     );
 
     if (status == ERROR_SUCCESS)
