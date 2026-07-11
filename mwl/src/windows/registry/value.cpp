@@ -53,15 +53,17 @@ Value::Value(std::wstring_view name, ValueType type, std::span<const Byte> data)
 
         assert(data.size() % sizeof(CharType) == 0);
 
-        const CharType* chars = reinterpret_cast<const CharType*>(data.data());
-        size_t charCount = data.size() / sizeof(CharType);
-        if (charCount > 0 &&
-            chars[charCount - 1] == L'\0') // null-terminated 문자열이므로 마지막 null 문자를 제거합니다.
+        const CharType* buffer = reinterpret_cast<const CharType*>(data.data());
+        std::size_t bufSize = data.size() / sizeof(CharType);
+
+        // String(std::wstring)은 객체 스스로 null-terminated 문자열을 보장함으로, buffer의 마지막 null 문자를
+        // 제거합니다.
+        if (0 < bufSize && buffer[bufSize - 1] == L'\0')
         {
-            --charCount;
+            --bufSize;
         }
 
-        data_ = String(chars, charCount);
+        data_ = String(buffer, bufSize);
         break;
     }
     case ValueType::MultiString: {
@@ -69,19 +71,29 @@ Value::Value(std::wstring_view name, ValueType type, std::span<const Byte> data)
 
         assert(data.size() % sizeof(CharType) == 0);
 
-        const CharType* chars = reinterpret_cast<const CharType*>(data.data());
-        size_t charCount = data.size() / sizeof(CharType);
+        const CharType* buffer = reinterpret_cast<const CharType*>(data.data());
+        std::size_t bufSize = data.size() / sizeof(CharType);
+
         MultiString strings{};
-        size_t start = 0;
-        for (size_t i = 0; i < charCount; ++i)
+        std::size_t start = 0;
+
+        for (std::size_t i = 0; i < bufSize; ++i)
         {
-            if (chars[i] == L'\0')
+            // MULTI_SZ는 null 문자로 각 문자열을 구분하고, 마지막에는 두 개의 null 문자가 연속으로 옵니다.
+            // 따라서, null 문자를 만나면 현재까지의 문자열을 추출합니다.
+            // 예: "ABC\0DEF\0\0" -> "ABC", "DEF"
+            if (buffer[i] == L'\0')
             {
-                if (i > start)
-                    strings.emplace_back(chars + start, i - start);
+                if (start < i)
+                {
+                    // buffer + start부터 i - start 길이만큼의 문자열을 추출하여 MultiString에 추가합니다.
+                    strings.emplace_back(buffer + start, i - start);
+                }
+
                 start = i + 1;
             }
         }
+
         data_ = std::move(strings);
         break;
     }

@@ -61,6 +61,7 @@ TEST(ValueTest, DwordConstructor_SetsNameTypeAndData)
 
     EXPECT_EQ(value.name(), name);
     EXPECT_EQ(value.type(), reg::ValueType::Dword);
+    EXPECT_EQ(value.data<Dword>().has_value(), true);
     EXPECT_EQ(value.data<Dword>(), expected);
 }
 
@@ -73,6 +74,7 @@ TEST(ValueTest, QwordConstructor_SetsNameTypeAndData)
 
     EXPECT_EQ(value.name(), name);
     EXPECT_EQ(value.type(), reg::ValueType::Qword);
+    EXPECT_EQ(value.data<Qword>().has_value(), true);
     EXPECT_EQ(value.data<Qword>(), expected);
 }
 
@@ -85,6 +87,7 @@ TEST(ValueTest, StringConstructor_DefaultsToRegSz)
 
     EXPECT_EQ(value.name(), name);
     EXPECT_EQ(value.type(), reg::ValueType::String);
+    EXPECT_EQ(value.data<String>().has_value(), true);
     EXPECT_EQ(value.data<String>(), expected);
 }
 
@@ -96,6 +99,7 @@ TEST(ValueTest, StringConstructor_IsExpandTrue_SetsExpandString)
     reg::Value value{ name, expected, true };
 
     EXPECT_EQ(value.type(), reg::ValueType::ExpandString);
+    EXPECT_EQ(value.data<String>().has_value(), true);
     EXPECT_EQ(value.data<String>(), expected);
 }
 
@@ -108,6 +112,7 @@ TEST(ValueTest, MultiStringConstructor_SetsNameTypeAndData)
 
     EXPECT_EQ(value.name(), name);
     EXPECT_EQ(value.type(), reg::ValueType::MultiString);
+    EXPECT_EQ(value.data<MultiString>().has_value(), true);
     EXPECT_EQ(value.data<MultiString>(), expected);
 }
 
@@ -120,6 +125,7 @@ TEST(ValueTest, BinaryConstructor_SetsNameTypeAndData)
 
     EXPECT_EQ(value.name(), name);
     EXPECT_EQ(value.type(), reg::ValueType::Binary);
+    EXPECT_EQ(value.data<Binary>().has_value(), true);
     EXPECT_EQ(value.data<Binary>(), expected);
 }
 
@@ -134,6 +140,7 @@ TEST(ValueTest, RawBufferConstructor_Dword_ParsesValue)
     reg::Value value{ name, reg::ValueType::Dword, bytes };
 
     EXPECT_EQ(value.type(), reg::ValueType::Dword);
+    EXPECT_EQ(value.data<Dword>().has_value(), true);
     EXPECT_EQ(value.data<Dword>(), expected);
 }
 
@@ -146,6 +153,7 @@ TEST(ValueTest, RawBufferConstructor_Qword_ParsesValue)
     reg::Value value{ name, reg::ValueType::Qword, bytes };
 
     EXPECT_EQ(value.type(), reg::ValueType::Qword);
+    EXPECT_EQ(value.data<Qword>().has_value(), true);
     EXPECT_EQ(value.data<Qword>(), expected);
 }
 
@@ -158,6 +166,7 @@ TEST(ValueTest, RawBufferConstructor_String_StripsTrailingNull)
     reg::Value value{ name, reg::ValueType::String, bytes };
 
     EXPECT_EQ(value.type(), reg::ValueType::String);
+    EXPECT_EQ(value.data<String>().has_value(), true);
     EXPECT_EQ(value.data<String>(), expected);
 }
 
@@ -169,6 +178,7 @@ TEST(ValueTest, RawBufferConstructor_String_WithoutTrailingNull_KeepsAllChars)
 
     reg::Value value{ name, reg::ValueType::String, bytes };
 
+    EXPECT_EQ(value.data<String>().has_value(), true);
     EXPECT_EQ(value.data<String>(), expected);
 }
 
@@ -187,14 +197,15 @@ TEST(ValueTest, RawBufferConstructor_ExpandString_ParsesAsString)
 TEST(ValueTest, RawBufferConstructor_MultiString_ParsesAllStrings)
 {
     constexpr std::wstring_view name{ L"RawMultiString" };
-    const std::vector<wchar_t> chars{ L'A', L'\0', L'B', L'C', L'\0', L'\0' };
+    const std::vector<wchar_t> chars{ L'A', L'B', L'C', L'\0', L'D', L'E', L'F', L'\0', L'\0' };
     std::vector<Byte> bytes(reinterpret_cast<const Byte*>(chars.data()),
                             reinterpret_cast<const Byte*>(chars.data() + chars.size()));
 
     reg::Value value{ name, reg::ValueType::MultiString, bytes };
 
-    const MultiString expected{ L"A", L"BC" };
+    const MultiString expected{ L"ABC", L"DEF" };
     EXPECT_EQ(value.type(), reg::ValueType::MultiString);
+    EXPECT_EQ(value.data<MultiString>().has_value(), true);
     EXPECT_EQ(value.data<MultiString>(), expected);
 }
 
@@ -205,7 +216,8 @@ TEST(ValueTest, RawBufferConstructor_MultiString_EmptyBuffer_ReturnsEmpty)
 
     reg::Value value{ name, reg::ValueType::MultiString, bytes };
 
-    EXPECT_TRUE(value.data<MultiString>().empty());
+    EXPECT_EQ(value.data<MultiString>().has_value(), true);
+    EXPECT_TRUE(value.data<MultiString>().value().empty());
 }
 
 TEST(ValueTest, RawBufferConstructor_Binary_CopiesBytes)
@@ -216,6 +228,7 @@ TEST(ValueTest, RawBufferConstructor_Binary_CopiesBytes)
     reg::Value value{ name, reg::ValueType::Binary, expected };
 
     EXPECT_EQ(value.type(), reg::ValueType::Binary);
+    EXPECT_EQ(value.data<Binary>().has_value(), true);
     EXPECT_EQ(value.data<Binary>(), expected);
 }
 
@@ -227,5 +240,29 @@ TEST(ValueTest, RawBufferConstructor_UnknownType_FallsBackToBinary)
     reg::Value value{ name, reg::ValueType::None, expected };
 
     EXPECT_EQ(value.type(), reg::ValueType::None);
+    EXPECT_EQ(value.data<Binary>().has_value(), true);
     EXPECT_EQ(value.data<Binary>(), expected);
+}
+
+// --- data<T>() 타입 불일치 ---
+
+TEST(ValueTest, Data_TypeMismatch_ReturnsNullopt)
+{
+    reg::Value value{ L"TestDword", Dword{ 0x1234 } };
+
+    EXPECT_EQ(value.data<Qword>().has_value(), false);
+    EXPECT_EQ(value.data<String>().has_value(), false);
+    EXPECT_EQ(value.data<MultiString>().has_value(), false);
+    EXPECT_EQ(value.data<Binary>().has_value(), false);
+}
+
+TEST(ValueTest, DefaultConstructor_Data_AnyType_ReturnsNullopt)
+{
+    reg::Value value{};
+
+    EXPECT_EQ(value.data<Dword>().has_value(), false);
+    EXPECT_EQ(value.data<Qword>().has_value(), false);
+    EXPECT_EQ(value.data<String>().has_value(), false);
+    EXPECT_EQ(value.data<MultiString>().has_value(), false);
+    EXPECT_EQ(value.data<Binary>().has_value(), false);
 }

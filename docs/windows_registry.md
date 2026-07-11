@@ -156,7 +156,7 @@ if (!values.ok())
 for (const Value& value : values.value())
 {
     if (value.type() == ValueType::Dword)
-        std::wcout << value.name() << L" = " << value.data<Dword>() << L'\n';
+        std::wcout << value.name() << L" = " << value.data<Dword>().value() << L'\n';
 }
 ```
 

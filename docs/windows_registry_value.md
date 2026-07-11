@@ -8,7 +8,7 @@
 - `Value`는 비템플릿 클래스이며 `std::variant`로 런타임에 결정되는 값의 종류를 표현한다 — 컴파일타임 템플릿 매개변수로는 `std::vector<Value>`에 이질적인 타입을 담을 수 없다
 - `ValueType` enum은 `REG_*` WinAPI 상수와 1:1 대응하며, `Value`의 `data_`가 어떤 variant 대체자를 사용하는지 결정한다
 - `String`(`REG_SZ`)과 `ExpandString`(`REG_EXPAND_SZ`)처럼 C++ 표현이 동일한(`std::wstring`) 타입은 `ValueType` 파라미터로 구분한다
-- `data<T>()`로 variant를 직접 노출하지 않고 타입 안전하게 접근한다 — 타입 불일치 시 `assert`로 검사한다 (`Result::value()`의 `assert(ok())`와 동일한 컨벤션) — [error_handling_architecture.md](error_handling_architecture.md) 참조
+- `data<T>()`로 variant를 직접 노출하지 않고 타입 안전하게 접근한다 — `T`가 활성 대체자가 아니면 `std::nullopt`를 반환하는 `std::optional<T>` 값 복사본을 돌려준다 (레지스트리 값은 대부분 작아 복사 비용이 무시할 만하다)
 
 ---
 
@@ -84,7 +84,7 @@ raw 버퍼 생성자가 비템플릿인 이유: WinAPI 버퍼는 항상 raw 바�
 |---|---|---|
 | `name()` | `const std::wstring&` | 값 이름 |
 | `type()` | `ValueType` | 값의 종류 |
-| `template<class T> data()` | `const T&` | `data_`에서 `T` 대체자를 꺼낸다. `assert(std::holds_alternative<T>(data_))`로 타입 불일치를 검사한다 |
+| `template<class T> data()` | `std::optional<T>` | `data_`에서 `T` 대체자를 복사본으로 꺼낸다. `T`가 활성 대체자가 아니면 `std::nullopt` |
 
 ---
 
@@ -117,21 +117,21 @@ for (const Value& value : values.value())
     switch (value.type())
     {
     case ValueType::Dword:
-        std::wcout << value.name() << L" = " << value.data<Dword>() << L"\n";
+        std::wcout << value.name() << L" = " << value.data<Dword>().value() << L"\n";
         break;
 
     case ValueType::String:
     case ValueType::ExpandString:
-        std::wcout << value.name() << L" = " << value.data<String>() << L"\n";
+        std::wcout << value.name() << L" = " << value.data<String>().value() << L"\n";
         break;
 
     case ValueType::MultiString:
-        for (const auto& s : value.data<MultiString>())
+        for (const auto& s : value.data<MultiString>().value())
             std::wcout << L"  " << s << L"\n";
         break;
 
     case ValueType::Binary:
-        // value.data<Binary>() — std::vector<BYTE>
+        // value.data<Binary>().value() — std::vector<BYTE>
         break;
 
     default:

@@ -3,6 +3,7 @@
 #include <Windows.h>
 
 #include <cassert>
+#include <optional>
 #include <span>
 #include <string>
 #include <string_view>
@@ -31,7 +32,7 @@ class Value
 {
 public:
 
-    using Type = std::variant<std::monostate, // ValueType::None에 해당하는 빈 상태
+    using Data = std::variant<std::monostate, // ValueType::None에 해당하는 빈 상태
                               Dword,          // ValueType::Dword에 해당하는 32비트 숫자
                               Qword,          // ValueType::Qword에 해당하는 64비트 숫자
                               String,         // ValueType::String,  ValueType::ExpandString에
@@ -112,25 +113,24 @@ public:
     /// 저장된 데이터를 반환합니다.
     /// </summary>
     /// <typeparam name="T">반환할 데이터 타입</typeparam>
-    /// <returns>저장된 데이터</returns>
+    /// <returns>T에 해당하는 값이 저장되어 있으면 그 복사본을, 아니면 std::nullopt를 반환합니다.</returns>
     /// <remarks>
-    /// - 반환을 어떻게 해야 하는가?
-    ///     - mwl::Result로 반환해야 하는가?
-    ///     - std::optional로 반환해야 하는가?
-    /// - 타입을 잘못 지정했을 때, 어떻게 해야 하는가?
+    /// std::optional<T>를 반환하므로, String, MultiString, Binary 타입에서 복사 비용이 발생할 수 있으므로 주의해야
+    /// 합니다. 하지만, 일반적으로 레지스트리 값은 크기가 작기 때문에 큰 문제가 되지 않습니다. 만약 성능이 중요한 경우,
+    /// std::optional<std::reference_wrapper<const T>>를 반환하도록 변경할 수도 있습니다.
     /// </remarks>
     template<class T>
-    const T& data() const
+    std::optional<T> data() const
     {
-        assert(std::holds_alternative<T>(data_));
-        return std::get<T>(data_);
+        const T* ptr = std::get_if<T>(&data_);
+        return ptr == nullptr ? std::nullopt : std::optional<T>{ *ptr };
     }
 
 private:
 
     std::wstring name_{};
     ValueType type_{ ValueType::None };
-    Type data_{};
+    Data data_{};
 };
 
 } // namespace mwl::windows::registry
