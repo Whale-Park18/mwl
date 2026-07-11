@@ -178,7 +178,7 @@ TEST_F(RegistryTest, EnumSubKeys_WithChildren_ReturnsAllNames)
 
 TEST_F(RegistryTest, EnumValues_EmptyKey_ReturnsEmpty)
 {
-    auto result = reg::EnumValues(key_, L"");
+    auto result = reg::EnumValues(key_);
     AssertOk(result, "EnumValues empty");
 
     EXPECT_TRUE(result.value().empty());
@@ -191,7 +191,7 @@ TEST_F(RegistryTest, EnumValues_DwordValue_HasCorrectTypeAndData)
 
     AssertOk(reg::WriteDword(key_, L"", name, expected), "WriteDword for enum");
 
-    auto result = reg::EnumValues(key_, L"");
+    auto result = reg::EnumValues(key_);
     AssertOk(result, "EnumValues");
 
     const auto& values = result.value();
@@ -208,7 +208,7 @@ TEST_F(RegistryTest, EnumValues_QwordValue_HasCorrectTypeAndData)
 
     AssertOk(reg::WriteQword(key_, L"", name, expected), "WriteQword for enum");
 
-    auto result = reg::EnumValues(key_, L"");
+    auto result = reg::EnumValues(key_);
     AssertOk(result, "EnumValues");
 
     const auto& values = result.value();
@@ -225,7 +225,7 @@ TEST_F(RegistryTest, EnumValues_StringValue_HasCorrectTypeAndData)
 
     AssertOk(reg::WriteString(key_, L"", name, expected), "WriteString for enum");
 
-    auto result = reg::EnumValues(key_, L"");
+    auto result = reg::EnumValues(key_);
     AssertOk(result, "EnumValues");
 
     const auto& values = result.value();
@@ -241,7 +241,7 @@ TEST_F(RegistryTest, EnumValues_MultipleValues_CountMatches)
     AssertOk(reg::WriteQword(key_, L"", L"V2", 2ull), "WriteQword V2");
     AssertOk(reg::WriteString(key_, L"", L"V3", L"three"), "WriteString V3");
 
-    auto result = reg::EnumValues(key_, L"");
+    auto result = reg::EnumValues(key_);
     AssertOk(result, "EnumValues multi");
 
     EXPECT_EQ(result.value().size(), 3u);

@@ -72,6 +72,9 @@
     <ClInclude Include="include\mwl\windows\definition.h">
       <Filter>include\mwl\windows</Filter>
     </ClInclude>
+    <ClInclude Include="include\mwl\windows\registry\definition.h">
+      <Filter>include\mwl\windows\registry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\status\error.cpp">

@@ -15,4 +15,6 @@ using String = std::wstring;
 using MultiString = std::vector<std::wstring>;
 using Binary = std::vector<Byte>;
 
+using StringView = std::wstring_view;
+
 } // namespace mwl::windows

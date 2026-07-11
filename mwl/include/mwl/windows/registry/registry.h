@@ -23,7 +23,7 @@ namespace mwl::windows::registry
 /// <param name="options">키 옵션. 기본값은 비휘발성 키(REG_OPTION_NON_VOLATILE).</param>
 /// <param name="desired">키에 대한 액세스 권한. 기본값은 KEY_ALL_ACCESS.</param>
 /// <returns>성공 시 생성/열린 키의 UniqueRegistryHandle, 실패 시 Error.</returns>
-[[nodiscard]] Result<handle::UniqueRegistryHandle> CreateKey(handle::RegistryHandleView key, std::wstring_view subkey,
+[[nodiscard]] Result<handle::UniqueRegistryHandle> CreateKey(handle::RegistryHandleView key, StringView subkey,
                                                              DWORD options = REG_OPTION_NON_VOLATILE,
                                                              DWORD desired = KEY_ALL_ACCESS);
 
@@ -34,7 +34,7 @@ namespace mwl::windows::registry
 /// <param name="subkey">열 서브 키의 상대 경로.</param>
 /// <param name="desired">키에 대한 액세스 권한(예: KEY_READ).</param>
 /// <returns>성공 시 열린 키의 UniqueRegistryHandle, 실패 시 Error.</returns>
-[[nodiscard]] Result<handle::UniqueRegistryHandle> OpenKey(handle::RegistryHandleView key, std::wstring_view subkey,
+[[nodiscard]] Result<handle::UniqueRegistryHandle> OpenKey(handle::RegistryHandleView key, StringView subkey,
                                                            DWORD desired);
 
 /// <summary>
@@ -43,7 +43,7 @@ namespace mwl::windows::registry
 /// <param name="key">부모 키 핸들.</param>
 /// <param name="subkey">삭제할 서브 키의 상대 경로.</param>
 /// <returns>성공 시 값 없는 Result, 실패 시 Error.</returns>
-[[nodiscard]] Result<void> DeleteKey(handle::RegistryHandleView key, std::wstring_view subkey);
+[[nodiscard]] Result<void> DeleteKey(handle::RegistryHandleView key, StringView subkey);
 
 /// <summary>
 /// 지정한 키에서 REG_DWORD 값을 읽습니다(RegGetValueW).
@@ -52,8 +52,7 @@ namespace mwl::windows::registry
 /// <param name="subKey">key 아래의 추가 서브 키 경로. 빈 문자열이면 key 자체에서 읽습니다.</param>
 /// <param name="valueName">읽을 값의 이름.</param>
 /// <returns>성공 시 읽은 DWORD 값, 실패 시 Error.</returns>
-[[nodiscard]] Result<DWORD> ReadDword(handle::RegistryHandleView key, std::wstring_view subKey,
-                                      std::wstring_view valueName);
+[[nodiscard]] Result<Dword> ReadDword(handle::RegistryHandleView key, StringView subKey, StringView valueName);
 
 /// <summary>
 /// 지정한 키에서 REG_QWORD 값을 읽습니다(RegGetValueW).
@@ -62,8 +61,7 @@ namespace mwl::windows::registry
 /// <param name="subKey">key 아래의 추가 서브 키 경로. 빈 문자열이면 key 자체에서 읽습니다.</param>
 /// <param name="valueName">읽을 값의 이름.</param>
 /// <returns>성공 시 읽은 DWORD64 값, 실패 시 Error.</returns>
-[[nodiscard]] Result<DWORD64> ReadQword(handle::RegistryHandleView key, std::wstring_view subKey,
-                                        std::wstring_view valueName);
+[[nodiscard]] Result<Qword> ReadQword(handle::RegistryHandleView key, StringView subKey, StringView valueName);
 
 /// <summary>
 /// 지정한 키에서 REG_SZ 문자열 값을 읽습니다(RegGetValueW).
@@ -72,8 +70,7 @@ namespace mwl::windows::registry
 /// <param name="subKey">key 아래의 추가 서브 키 경로. 빈 문자열이면 key 자체에서 읽습니다.</param>
 /// <param name="valueName">읽을 값의 이름.</param>
 /// <returns>성공 시 읽은 문자열(std::wstring), 실패 시 Error.</returns>
-[[nodiscard]] Result<std::wstring> ReadString(handle::RegistryHandleView key, std::wstring_view subKey,
-                                              std::wstring_view valueName);
+[[nodiscard]] Result<String> ReadString(handle::RegistryHandleView key, StringView subKey, StringView valueName);
 
 /// <summary>
 /// 지정한 키에 REG_DWORD 값을 씁니다(RegSetKeyValueW). 값이 없으면 새로 만들고, 있으면 덮어씁니다.
@@ -83,8 +80,8 @@ namespace mwl::windows::registry
 /// <param name="valueName">쓸 값의 이름.</param>
 /// <param name="data">저장할 DWORD 값.</param>
 /// <returns>성공 시 값 없는 Result, 실패 시 Error.</returns>
-[[nodiscard]] Result<void> WriteDword(handle::RegistryHandleView key, std::wstring_view subKey,
-                                      std::wstring_view valueName, DWORD data);
+[[nodiscard]] Result<void> WriteDword(handle::RegistryHandleView key, StringView subKey, StringView valueName,
+                                      Dword data);
 
 /// <summary>
 /// 지정한 키에 REG_QWORD 값을 씁니다(RegSetKeyValueW). 값이 없으면 새로 만들고, 있으면 덮어씁니다.
@@ -94,19 +91,20 @@ namespace mwl::windows::registry
 /// <param name="valueName">쓸 값의 이름.</param>
 /// <param name="data">저장할 DWORD64 값.</param>
 /// <returns>성공 시 값 없는 Result, 실패 시 Error.</returns>
-[[nodiscard]] Result<void> WriteQword(handle::RegistryHandleView key, std::wstring_view subKey,
-                                      std::wstring_view valueName, DWORD64 data);
+[[nodiscard]] Result<void> WriteQword(handle::RegistryHandleView key, StringView subKey, StringView valueName,
+                                      Qword data);
 
 /// <summary>
 /// 지정한 키에 REG_SZ 문자열 값을 씁니다(RegSetKeyValueW). 값이 없으면 새로 만들고, 있으면 덮어씁니다.
 /// </summary>
-/// <param name="key">기준 키 핸들.</param>
+/// <param name="key">
+/// 기준 키 핸들.</param>
 /// <param name="subKey">key 아래의 추가 서브 키 경로. 빈 문자열이면 key 자체에 씁니다.</param>
 /// <param name="valueName">쓸 값의 이름.</param>
 /// <param name="data">저장할 문자열. 널 종료 문자를 포함해 기록됩니다.</param>
 /// <returns>성공 시 값 없는 Result, 실패 시 Error.</returns>
-[[nodiscard]] Result<void> WriteString(handle::RegistryHandleView key, std::wstring_view subKey,
-                                       std::wstring_view valueName, std::wstring_view data);
+[[nodiscard]] Result<void> WriteString(handle::RegistryHandleView key, StringView subKey, StringView valueName,
+                                       StringView data);
 
 /// <summary>
 /// 지정한 키 바로 아래의 값을 삭제합니다(RegDeleteValueW).
@@ -114,17 +112,20 @@ namespace mwl::windows::registry
 /// <param name="key">값이 속한 키 핸들.</param>
 /// <param name="valueName">삭제할 값의 이름.</param>
 /// <returns>성공 시 값 없는 Result, 실패 시 Error.</returns>
-[[nodiscard]] Result<void> DeleteValue(handle::RegistryHandleView key, std::wstring_view valueName);
+[[nodiscard]] Result<void> DeleteValue(handle::RegistryHandleView key, StringView valueName);
 
-#define TEST_ENUM_CALLBACKS 1
-#if TEST_ENUM_CALLBACKS
-
-// 키 나열
+/// <summary>
+/// 지정한 키 아래의 서브 키를 나열합니다(RegEnumKeyExW).
+/// </summary>
+/// <param name="key">나열할 키의 핸들.</param>
+/// <returns>성공 시 서브 키 이름의 벡터, 실패 시 Error.</returns>
 [[nodiscard]] Result<std::vector<std::wstring>> EnumSubKeys(handle::RegistryHandleView key);
 
-// 값 나열
-[[nodiscard]] Result<std::vector<Value>> EnumValues(handle::RegistryHandleView key, std::wstring_view subKey);
-
-#endif
+/// <summary>
+/// 지정한 키 아래의 값을 나열합니다(RegEnumValueW).
+/// </summary>
+/// <param name="key">나열할 값이 속한 키의 핸들.</param>
+/// <returns>성공 시 값 객체의 벡터, 실패 시 Error.</returns>
+[[nodiscard]] Result<std::vector<Value>> EnumValues(handle::RegistryHandleView key);
 
 } // namespace mwl::windows::registry

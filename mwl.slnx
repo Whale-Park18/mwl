@@ -3,6 +3,12 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
+  <Folder Name="/docs/">
+    <File Path="docs/error_handling_architecture.md" />
+    <File Path="docs/windows_handle.md" />
+    <File Path="docs/windows_registry.md" />
+    <File Path="docs/windows_registry_value.md" />
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".clang-format" />
     <File Path=".editorconfig" />

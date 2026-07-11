@@ -67,11 +67,9 @@ mwl/src/windows/registry/
 | 함수 | WinAPI | 설명 |
 |---|---|---|
 | `Result<std::vector<std::wstring>> EnumSubKeys(key)` | `RegEnumKeyExW` | `key` 바로 아래의 서브 키 이름을 모두 나열한다. |
-| `Result<std::vector<Value>> EnumValues(key, subKey)` | `RegQueryInfoKeyW` + `RegEnumValueW` | `key` 바로 아래의 모든 값을 타입별로 `Value`에 담아 나열한다 — [windows_registry_value.md](windows_registry_value.md) 참조. |
+| `Result<std::vector<Value>> EnumValues(key)` | `RegQueryInfoKeyW` + `RegEnumValueW` | `key` 바로 아래의 모든 값을 타입별로 `Value`에 담아 나열한다 — [windows_registry_value.md](windows_registry_value.md) 참조. |
 
 > 매개변수 `key`의 타입은 모두 `handle::RegistryHandleView`이다.
-
-> **알려진 제한:** `EnumValues`의 `subKey` 매개변수는 현재 구현에서 사용되지 않는다 — 항상 `key` 자체에 대해 `RegQueryInfoKeyW`/`RegEnumValueW`를 호출하므로, 비어 있지 않은 `subKey`를 넘겨도 무시된다 (다른 값 함수처럼 `subKey` 아래로 내려가지 않음). 별도 이슈로 추적한다.
 
 ---
 
@@ -149,7 +147,7 @@ reg::DeleteKey(RegistryHandleView{ HKEY_CURRENT_USER }, L"SOFTWARE\\MyApp"); // 
 ### 값 열거
 
 ```cpp
-auto values = reg::EnumValues(key, L"");
+auto values = reg::EnumValues(key);
 if (!values.ok())
     return values.error();
 

@@ -108,7 +108,7 @@ Value hash(L"Hash", Binary{ 0x01, 0x02, 0x03 });
 ### `EnumValues` 결과 순회
 
 ```cpp
-auto values = reg::EnumValues(key, L"SOFTWARE\\MyApp");
+auto values = reg::EnumValues(key); // key는 값을 나열할 대상 키 자체를 가리켜야 함
 if (!values.ok())
     return values.error();
 

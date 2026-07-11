@@ -1,5 +1,6 @@
 #include <Windows.h>
 
+#include <algorithm>
 #include <array>
 #include <format>
 #include <span>
@@ -23,7 +24,7 @@
 namespace mwl::windows::registry
 {
 
-Result<handle::UniqueRegistryHandle> CreateKey(handle::RegistryHandleView key, std::wstring_view subkey, Dword options,
+Result<handle::UniqueRegistryHandle> CreateKey(handle::RegistryHandleView key, StringView subkey, Dword options,
                                                Dword desired)
 {
     HKEY rawHandle{ nullptr };
@@ -46,7 +47,7 @@ Result<handle::UniqueRegistryHandle> CreateKey(handle::RegistryHandleView key, s
     return LstatusError("Failed to create registry key", status);
 }
 
-Result<handle::UniqueRegistryHandle> OpenKey(handle::RegistryHandleView key, std::wstring_view subkey, Dword desired)
+Result<handle::UniqueRegistryHandle> OpenKey(handle::RegistryHandleView key, StringView subkey, Dword desired)
 {
     HKEY rawHandle{ nullptr };
     LSTATUS status = RegOpenKeyExW(key.Get(),     // 키 핸들
@@ -64,7 +65,7 @@ Result<handle::UniqueRegistryHandle> OpenKey(handle::RegistryHandleView key, std
     return LstatusError("Failed to open registry key", status);
 }
 
-Result<void> DeleteKey(handle::RegistryHandleView key, std::wstring_view subkey)
+Result<void> DeleteKey(handle::RegistryHandleView key, StringView subkey)
 {
     LSTATUS status = RegDeleteKeyW(key.Get(),    // 키 핸들
                                    subkey.data() // 삭제할 서브 키의 상대 경로
@@ -78,7 +79,7 @@ Result<void> DeleteKey(handle::RegistryHandleView key, std::wstring_view subkey)
     return LstatusError("Failed to delete registry key", status);
 }
 
-Result<std::wstring> ReadString(handle::RegistryHandleView key, std::wstring_view subKey, std::wstring_view valueName)
+Result<std::wstring> ReadString(handle::RegistryHandleView key, StringView subKey, StringView valueName)
 {
     Dword size{ 0 };
 
@@ -108,7 +109,7 @@ Result<std::wstring> ReadString(handle::RegistryHandleView key, std::wstring_vie
     return LstatusError("Failed to read registry REG_SZ value", status);
 }
 
-Result<Dword> ReadDword(handle::RegistryHandleView key, std::wstring_view subKey, std::wstring_view valueName)
+Result<Dword> ReadDword(handle::RegistryHandleView key, StringView subKey, StringView valueName)
 {
     Dword value{ 0 };
     Dword size{ sizeof(Dword) };
@@ -129,9 +130,9 @@ Result<Dword> ReadDword(handle::RegistryHandleView key, std::wstring_view subKey
     return LstatusError("Failed to read registry DWORD value", status);
 }
 
-Result<DWORD64> ReadQword(handle::RegistryHandleView key, std::wstring_view subKey, std::wstring_view valueName)
+Result<Qword> ReadQword(handle::RegistryHandleView key, StringView subKey, StringView valueName)
 {
-    DWORD64 value{ 0 };
+    Qword value{ 0 };
     Dword size{ sizeof(Qword) };
     LSTATUS status = RegGetValueW(key.Get(),        // 키 핸들
                                   subKey.data(),    // 서브 키
@@ -150,15 +151,14 @@ Result<DWORD64> ReadQword(handle::RegistryHandleView key, std::wstring_view subK
     return LstatusError("Failed to read registry DWORD value", status);
 }
 
-Result<void> WriteDword(handle::RegistryHandleView key, std::wstring_view subKey, std::wstring_view valueName,
-                        DWORD data)
+Result<void> WriteDword(handle::RegistryHandleView key, StringView subKey, StringView valueName, Dword data)
 {
     LSTATUS status = RegSetKeyValueW(key.Get(),        // 키 핸들
                                      subKey.data(),    // 서브 키
                                      valueName.data(), // 값 이름
                                      REG_DWORD,        // 데이터 유형
                                      &data,            // 데이터 버퍼
-                                     sizeof(DWORD)     // 데이터 크기
+                                     sizeof(Dword)     // 데이터 크기
     );
 
     if (status == ERROR_SUCCESS)
@@ -169,15 +169,14 @@ Result<void> WriteDword(handle::RegistryHandleView key, std::wstring_view subKey
     return LstatusError("Failed to write registry DWORD value", status);
 }
 
-Result<void> WriteQword(handle::RegistryHandleView key, std::wstring_view subKey, std::wstring_view valueName,
-                        DWORD64 data)
+Result<void> WriteQword(handle::RegistryHandleView key, StringView subKey, StringView valueName, Qword data)
 {
     LSTATUS status = RegSetKeyValueW(key.Get(),        // 키 핸들
                                      subKey.data(),    // 서브 키
                                      valueName.data(), // 값 이름
                                      REG_QWORD,        // 데이터 유형
                                      &data,            // 데이터 버퍼
-                                     sizeof(DWORD64)   // 데이터 크기
+                                     sizeof(Qword)     // 데이터 크기
     );
 
     if (status == ERROR_SUCCESS)
@@ -188,8 +187,7 @@ Result<void> WriteQword(handle::RegistryHandleView key, std::wstring_view subKey
     return LstatusError("Failed to write registry REG_QWORD value", status);
 }
 
-Result<void> WriteString(handle::RegistryHandleView key, std::wstring_view subKey, std::wstring_view valueName,
-                         std::wstring_view data)
+Result<void> WriteString(handle::RegistryHandleView key, StringView subKey, StringView valueName, StringView data)
 {
     LSTATUS status = RegSetKeyValueW(key.Get(),                                              // 부모 키의 핸들
                                      subKey.data(),                                          // 서브 키
@@ -207,7 +205,7 @@ Result<void> WriteString(handle::RegistryHandleView key, std::wstring_view subKe
     return LstatusError("Failed to write registry REG_SZ value", status);
 }
 
-Result<void> DeleteValue(handle::RegistryHandleView key, std::wstring_view valueName)
+Result<void> DeleteValue(handle::RegistryHandleView key, StringView valueName)
 {
     LSTATUS status = RegDeleteValueW(key.Get(),       // 키 핸들
                                      valueName.data() // 값 이름
@@ -258,7 +256,7 @@ Result<std::vector<std::wstring>> EnumSubKeys(handle::RegistryHandleView key)
     return subKeys;
 }
 
-Result<std::vector<Value>> EnumValues(handle::RegistryHandleView key, std::wstring_view subKey)
+Result<std::vector<Value>> EnumValues(handle::RegistryHandleView key)
 {
     Dword maxNameLength{ 0 };
     Dword maxDataSize{ 0 };
@@ -282,12 +280,17 @@ Result<std::vector<Value>> EnumValues(handle::RegistryHandleView key, std::wstri
     }
 
     std::vector<Value> values{};
-    Dword index{ 0 };
+
+    std::vector<wchar_t> nameBuffer(maxNameLength + 1); // 값 이름 버퍼
+    Binary dataBuffer(maxDataSize + 1);                 // 값 데이터 버퍼
+    Dword index{ 0 };                                   // 값 인덱스
 
     while (true)
     {
-        std::vector<wchar_t> nameBuffer(maxNameLength + 1); // 값 이름 버퍼
-        Binary dataBuffer(maxDataSize + 1);                 // 값 데이터 버퍼
+        // vector를 매번 생성하지 않고, 기존 버퍼를 재사용하기 위해 초기화합니다.
+        std::fill(nameBuffer.begin(), nameBuffer.end(), L'\0');
+        std::fill(dataBuffer.begin(), dataBuffer.end(), Byte{ 0 });
+
         Dword type{};
         Dword nameLength{ maxNameLength + 1 }; // RegEnumValueW가 실제 기록한 크기로 줄이므로 매 반복마다 재설정
         Dword dataSize{ maxDataSize + 1 };     // RegEnumValueW가 실제 기록한 크기로 줄이므로 매 반복마다 재설정
