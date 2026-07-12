@@ -40,6 +40,20 @@ protected:
 
     void TearDown() override
     {
+        // 테스트 중 생성된 서브 키가 남아 있으면 RegDeleteKeyW(kTestSubKey)가 실패하므로,
+        // assertion 실패로 본문의 정리 코드가 건너뛰어진 경우를 대비해 먼저 정리한다.
+        if (key_)
+        {
+            auto subKeys = reg::EnumSubKeys(key_);
+            if (subKeys.ok())
+            {
+                for (const auto& subKey : subKeys.value())
+                {
+                    static_cast<void>(reg::DeleteKey(key_, subKey));
+                }
+            }
+        }
+
         key_.Reset();
         static_cast<void>(reg::DeleteKey(RegistryHandleView{ HKEY_CURRENT_USER }, kTestSubKey));
     }
@@ -188,9 +202,6 @@ TEST_F(RegistryTest, EnumSubKeys_WithChildren_ReturnsAllNames)
     EXPECT_EQ(keys.size(), 2u);
     EXPECT_NE(std::find(keys.begin(), keys.end(), std::wstring(L"ChildA")), keys.end());
     EXPECT_NE(std::find(keys.begin(), keys.end(), std::wstring(L"ChildB")), keys.end());
-
-    static_cast<void>(reg::DeleteKey(key_, L"ChildA"));
-    static_cast<void>(reg::DeleteKey(key_, L"ChildB"));
 }
 
 //***************************************************************************
