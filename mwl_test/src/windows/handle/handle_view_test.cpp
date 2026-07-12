@@ -44,8 +44,11 @@ protected:
     }
 };
 
-// --- 생성 ---
+//***************************************************************************
+// 생성
+//***************************************************************************
 
+// 기본 생성된 view는 유효하지 않은 상태인지 확인한다.
 TEST_F(HandleViewTest, DefaultConstruction_IsInvalid)
 {
     TestView v;
@@ -54,6 +57,7 @@ TEST_F(HandleViewTest, DefaultConstruction_IsInvalid)
     EXPECT_EQ(v.Get(), TestTraits::Empty());
 }
 
+// 유효한 값으로 생성하면 유효한 상태가 되는지 확인한다.
 TEST_F(HandleViewTest, ConstructFromValidHandle_IsValid)
 {
     TestView v(42);
@@ -62,6 +66,7 @@ TEST_F(HandleViewTest, ConstructFromValidHandle_IsValid)
     EXPECT_EQ(v.Get(), 42);
 }
 
+// 유효한 UniqueHandle로부터 생성하면 같은 값을 가리키는 유효한 view가 되는지 확인한다.
 TEST_F(HandleViewTest, ConstructFromValidUniqueHandle_IsValid)
 {
     TestHandle h(42);
@@ -71,6 +76,7 @@ TEST_F(HandleViewTest, ConstructFromValidUniqueHandle_IsValid)
     EXPECT_EQ(v.Get(), 42);
 }
 
+// 무효한 UniqueHandle로부터 생성하면 무효한 view가 되는지 확인한다.
 TEST_F(HandleViewTest, ConstructFromInvalidUniqueHandle_IsInvalid)
 {
     TestHandle h;
@@ -79,8 +85,11 @@ TEST_F(HandleViewTest, ConstructFromInvalidUniqueHandle_IsInvalid)
     EXPECT_FALSE(static_cast<bool>(v));
 }
 
-// --- 복사 ---
+//***************************************************************************
+// 복사
+//***************************************************************************
 
+// 복사 생성된 view가 같은 핸들 값을 공유하는지 확인한다.
 TEST_F(HandleViewTest, CopyConstruction_SharesSameHandleValue)
 {
     TestHandle h(42);
@@ -91,6 +100,7 @@ TEST_F(HandleViewTest, CopyConstruction_SharesSameHandleValue)
     EXPECT_EQ(TestTraits::close_count, 0);
 }
 
+// 복사 대입된 view가 같은 핸들 값을 공유하는지 확인한다.
 TEST_F(HandleViewTest, CopyAssignment_SharesSameHandleValue)
 {
     TestHandle h(42);
@@ -102,8 +112,11 @@ TEST_F(HandleViewTest, CopyAssignment_SharesSameHandleValue)
     EXPECT_EQ(TestTraits::close_count, 0);
 }
 
-// --- 이동 ---
+//***************************************************************************
+// 이동
+//***************************************************************************
 
+// 이동 생성된 view가 핸들 값을 그대로 전달받는지 확인한다.
 TEST_F(HandleViewTest, MoveConstruction_TransfersHandleValue)
 {
     TestHandle h(42);
@@ -114,6 +127,7 @@ TEST_F(HandleViewTest, MoveConstruction_TransfersHandleValue)
     EXPECT_EQ(TestTraits::close_count, 0);
 }
 
+// 이동 대입된 view가 핸들 값을 그대로 전달받는지 확인한다.
 TEST_F(HandleViewTest, MoveAssignment_TransfersHandleValue)
 {
     TestHandle h(42);
@@ -125,8 +139,11 @@ TEST_F(HandleViewTest, MoveAssignment_TransfersHandleValue)
     EXPECT_EQ(TestTraits::close_count, 0);
 }
 
-// --- operator bool / operator Handle ---
+//***************************************************************************
+// operator bool / operator Handle
+//***************************************************************************
 
+// 유효한 핸들을 가리키는 view에서 operator bool이 true를 반환하는지 확인한다.
 TEST_F(HandleViewTest, OperatorBool_ValidHandle_True)
 {
     TestHandle h(1);
@@ -135,6 +152,7 @@ TEST_F(HandleViewTest, OperatorBool_ValidHandle_True)
     EXPECT_TRUE(static_cast<bool>(v));
 }
 
+// 무효한 view에서 operator bool이 false를 반환하는지 확인한다.
 TEST_F(HandleViewTest, OperatorBool_InvalidHandle_False)
 {
     TestView v;
@@ -142,6 +160,7 @@ TEST_F(HandleViewTest, OperatorBool_InvalidHandle_False)
     EXPECT_FALSE(static_cast<bool>(v));
 }
 
+// operator Handle이 내부 핸들 값을 그대로 반환하는지 확인한다.
 TEST_F(HandleViewTest, OperatorHandle_ReturnsHandleValue)
 {
     TestHandle h(42);
@@ -150,8 +169,11 @@ TEST_F(HandleViewTest, OperatorHandle_ReturnsHandleValue)
     EXPECT_EQ(static_cast<TestTraits::Type>(v), 42);
 }
 
-// --- Get ---
+//***************************************************************************
+// Get
+//***************************************************************************
 
+// Get()이 내부 핸들 값을 그대로 반환하는지 확인한다.
 TEST_F(HandleViewTest, Get_ReturnsHandleValue)
 {
     TestHandle h(99);
@@ -160,6 +182,7 @@ TEST_F(HandleViewTest, Get_ReturnsHandleValue)
     EXPECT_EQ(v.Get(), 99);
 }
 
+// 기본 생성된 view의 Get()이 Empty() 값을 반환하는지 확인한다.
 TEST_F(HandleViewTest, Get_DefaultView_ReturnsEmpty)
 {
     TestView v;
@@ -167,8 +190,11 @@ TEST_F(HandleViewTest, Get_DefaultView_ReturnsEmpty)
     EXPECT_EQ(v.Get(), TestTraits::Empty());
 }
 
-// --- 소멸자 (비소유 확인) ---
+//***************************************************************************
+// 소멸자 (비소유 확인)
+//***************************************************************************
 
+// view가 소멸돼도 원본 핸들이 닫히지 않는지 확인한다.
 TEST_F(HandleViewTest, Destructor_DoesNotCloseHandle)
 {
     TestHandle h(42);
@@ -181,6 +207,7 @@ TEST_F(HandleViewTest, Destructor_DoesNotCloseHandle)
     EXPECT_TRUE(static_cast<bool>(h)); // UniqueHandle은 여전히 유효해야 함
 }
 
+// 여러 view가 동시에 소멸돼도 원본 핸들이 닫히지 않는지 확인한다.
 TEST_F(HandleViewTest, MultipleViews_DestructionDoesNotCloseHandle)
 {
     TestHandle h(42);
@@ -194,8 +221,11 @@ TEST_F(HandleViewTest, MultipleViews_DestructionDoesNotCloseHandle)
     EXPECT_EQ(TestTraits::close_count, 0);
 }
 
-// --- UniqueHandle과의 독립성 ---
+//***************************************************************************
+// UniqueHandle과의 독립성
+//***************************************************************************
 
+// view는 UniqueHandle의 수명에 관여하지 않으며, UniqueHandle 소멸 후에도 이전 값을 그대로 들고 있는지 확인한다.
 TEST_F(HandleViewTest, ViewDoesNotAffectUniqueHandleLifetime)
 {
     TestView v;

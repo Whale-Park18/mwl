@@ -42,8 +42,11 @@ std::vector<Byte> ToBytes(const T& value)
 
 } // namespace
 
-// --- 값 생성자 ---
+//***************************************************************************
+// 값 생성자
+//***************************************************************************
 
+// 기본 생성자는 이름이 비어 있고 타입이 None인 Value를 만드는지 확인한다.
 TEST(ValueTest, DefaultConstructor_HasNoneTypeAndEmptyName)
 {
     reg::Value value{};
@@ -52,6 +55,7 @@ TEST(ValueTest, DefaultConstructor_HasNoneTypeAndEmptyName)
     EXPECT_EQ(value.type(), reg::ValueType::None);
 }
 
+// Dword 생성자가 이름/타입/데이터를 올바르게 설정하는지 확인한다.
 TEST(ValueTest, DwordConstructor_SetsNameTypeAndData)
 {
     constexpr std::wstring_view name{ L"TestDword" };
@@ -65,6 +69,7 @@ TEST(ValueTest, DwordConstructor_SetsNameTypeAndData)
     EXPECT_EQ(value.data<Dword>(), expected);
 }
 
+// Qword 생성자가 이름/타입/데이터를 올바르게 설정하는지 확인한다.
 TEST(ValueTest, QwordConstructor_SetsNameTypeAndData)
 {
     constexpr std::wstring_view name{ L"TestQword" };
@@ -78,6 +83,7 @@ TEST(ValueTest, QwordConstructor_SetsNameTypeAndData)
     EXPECT_EQ(value.data<Qword>(), expected);
 }
 
+// String 생성자가 기본값으로 REG_SZ(String) 타입을 설정하는지 확인한다.
 TEST(ValueTest, StringConstructor_DefaultsToRegSz)
 {
     constexpr std::wstring_view name{ L"TestString" };
@@ -91,6 +97,7 @@ TEST(ValueTest, StringConstructor_DefaultsToRegSz)
     EXPECT_EQ(value.data<String>(), expected);
 }
 
+// isExpand가 true이면 ExpandString 타입으로 설정되는지 확인한다.
 TEST(ValueTest, StringConstructor_IsExpandTrue_SetsExpandString)
 {
     constexpr std::wstring_view name{ L"TestExpandString" };
@@ -103,6 +110,7 @@ TEST(ValueTest, StringConstructor_IsExpandTrue_SetsExpandString)
     EXPECT_EQ(value.data<String>(), expected);
 }
 
+// MultiString 생성자가 이름/타입/데이터를 올바르게 설정하는지 확인한다.
 TEST(ValueTest, MultiStringConstructor_SetsNameTypeAndData)
 {
     constexpr std::wstring_view name{ L"TestMultiString" };
@@ -116,6 +124,7 @@ TEST(ValueTest, MultiStringConstructor_SetsNameTypeAndData)
     EXPECT_EQ(value.data<MultiString>(), expected);
 }
 
+// Binary 생성자가 이름/타입/데이터를 올바르게 설정하는지 확인한다.
 TEST(ValueTest, BinaryConstructor_SetsNameTypeAndData)
 {
     constexpr std::wstring_view name{ L"TestBinary" };
@@ -129,8 +138,11 @@ TEST(ValueTest, BinaryConstructor_SetsNameTypeAndData)
     EXPECT_EQ(value.data<Binary>(), expected);
 }
 
-// --- raw 바이트 버퍼로부터의 생성 (Read/Enum용) ---
+//***************************************************************************
+// raw 바이트 버퍼로부터의 생성 (Read/Enum용)
+//***************************************************************************
 
+// raw 바이트 버퍼로부터 Dword 값을 올바르게 파싱하는지 확인한다.
 TEST(ValueTest, RawBufferConstructor_Dword_ParsesValue)
 {
     constexpr std::wstring_view name{ L"RawDword" };
@@ -144,6 +156,7 @@ TEST(ValueTest, RawBufferConstructor_Dword_ParsesValue)
     EXPECT_EQ(value.data<Dword>(), expected);
 }
 
+// raw 바이트 버퍼로부터 Qword 값을 올바르게 파싱하는지 확인한다.
 TEST(ValueTest, RawBufferConstructor_Qword_ParsesValue)
 {
     constexpr std::wstring_view name{ L"RawQword" };
@@ -157,6 +170,7 @@ TEST(ValueTest, RawBufferConstructor_Qword_ParsesValue)
     EXPECT_EQ(value.data<Qword>(), expected);
 }
 
+// null 종료 문자가 포함된 버퍼를 문자열로 파싱할 때 끝의 null이 제거되는지 확인한다.
 TEST(ValueTest, RawBufferConstructor_String_StripsTrailingNull)
 {
     constexpr std::wstring_view name{ L"RawString" };
@@ -170,6 +184,7 @@ TEST(ValueTest, RawBufferConstructor_String_StripsTrailingNull)
     EXPECT_EQ(value.data<String>(), expected);
 }
 
+// null 종료 문자가 없는 버퍼도 모든 문자를 그대로 보존하는지 확인한다.
 TEST(ValueTest, RawBufferConstructor_String_WithoutTrailingNull_KeepsAllChars)
 {
     constexpr std::wstring_view name{ L"RawStringNoNull" };
@@ -182,6 +197,7 @@ TEST(ValueTest, RawBufferConstructor_String_WithoutTrailingNull_KeepsAllChars)
     EXPECT_EQ(value.data<String>(), expected);
 }
 
+// ExpandString 타입 버퍼도 String과 동일하게 파싱되는지 확인한다.
 TEST(ValueTest, RawBufferConstructor_ExpandString_ParsesAsString)
 {
     constexpr std::wstring_view name{ L"RawExpandString" };
@@ -194,6 +210,7 @@ TEST(ValueTest, RawBufferConstructor_ExpandString_ParsesAsString)
     EXPECT_EQ(value.data<String>(), expected);
 }
 
+// null로 구분된 버퍼가 여러 문자열로 올바르게 분리되는지 확인한다.
 TEST(ValueTest, RawBufferConstructor_MultiString_ParsesAllStrings)
 {
     constexpr std::wstring_view name{ L"RawMultiString" };
@@ -209,6 +226,7 @@ TEST(ValueTest, RawBufferConstructor_MultiString_ParsesAllStrings)
     EXPECT_EQ(value.data<MultiString>(), expected);
 }
 
+// 빈 버퍼를 MultiString으로 파싱하면 빈 목록이 되는지 확인한다.
 TEST(ValueTest, RawBufferConstructor_MultiString_EmptyBuffer_ReturnsEmpty)
 {
     constexpr std::wstring_view name{ L"RawMultiStringEmpty" };
@@ -220,6 +238,7 @@ TEST(ValueTest, RawBufferConstructor_MultiString_EmptyBuffer_ReturnsEmpty)
     EXPECT_TRUE(value.data<MultiString>().value().empty());
 }
 
+// Binary 타입 버퍼가 바이트 그대로 복사되는지 확인한다.
 TEST(ValueTest, RawBufferConstructor_Binary_CopiesBytes)
 {
     constexpr std::wstring_view name{ L"RawBinary" };
@@ -232,6 +251,7 @@ TEST(ValueTest, RawBufferConstructor_Binary_CopiesBytes)
     EXPECT_EQ(value.data<Binary>(), expected);
 }
 
+// 알 수 없는 타입(None)이면 Binary로 폴백해 파싱되는지 확인한다.
 TEST(ValueTest, RawBufferConstructor_UnknownType_FallsBackToBinary)
 {
     constexpr std::wstring_view name{ L"RawUnknown" };
@@ -244,8 +264,11 @@ TEST(ValueTest, RawBufferConstructor_UnknownType_FallsBackToBinary)
     EXPECT_EQ(value.data<Binary>(), expected);
 }
 
-// --- data<T>() 타입 불일치 ---
+//***************************************************************************
+// data<T>() 타입 불일치
+//***************************************************************************
 
+// 저장된 타입과 다른 타입으로 data<T>()를 호출하면 nullopt를 반환하는지 확인한다.
 TEST(ValueTest, Data_TypeMismatch_ReturnsNullopt)
 {
     reg::Value value{ L"TestDword", Dword{ 0x1234 } };
@@ -256,6 +279,7 @@ TEST(ValueTest, Data_TypeMismatch_ReturnsNullopt)
     EXPECT_EQ(value.data<Binary>().has_value(), false);
 }
 
+// 기본 생성된 Value는 어떤 타입으로 조회해도 data<T>()가 nullopt를 반환하는지 확인한다.
 TEST(ValueTest, DefaultConstructor_Data_AnyType_ReturnsNullopt)
 {
     reg::Value value{};

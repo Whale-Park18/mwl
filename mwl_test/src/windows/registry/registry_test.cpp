@@ -47,13 +47,17 @@ protected:
     UniqueRegistryHandle key_;
 };
 
-// --- 키 관리 ---
+//***************************************************************************
+// 키 관리
+//***************************************************************************
 
+// 새 서브 키를 생성하면 유효한 핸들을 반환하는지 확인한다.
 TEST_F(RegistryTest, CreateKey_Succeeds)
 {
     EXPECT_NE(key_.Get(), nullptr);
 }
 
+// 존재하는 서브 키를 KEY_READ로 여는 데 성공하는지 확인한다.
 TEST_F(RegistryTest, OpenKey_Existing_Succeeds)
 {
     auto result = reg::OpenKey(RegistryHandleView{ HKEY_CURRENT_USER }, kTestSubKey, KEY_READ);
@@ -62,6 +66,7 @@ TEST_F(RegistryTest, OpenKey_Existing_Succeeds)
     EXPECT_NE(result.value().Get(), nullptr);
 }
 
+// 존재하지 않는 서브 키를 열면 실패를 반환하는지 확인한다.
 TEST_F(RegistryTest, OpenKey_Nonexistent_Fails)
 {
     auto result = reg::OpenKey(RegistryHandleView{ HKEY_CURRENT_USER }, LR"(SOFTWARE\MwlTestDoesNotExist)", KEY_READ);
@@ -69,6 +74,7 @@ TEST_F(RegistryTest, OpenKey_Nonexistent_Fails)
     EXPECT_FALSE(result.ok());
 }
 
+// 서브 키 삭제 후 같은 이름으로 다시 열면 실패하는지 확인한다.
 TEST_F(RegistryTest, DeleteKey_RemovesKey)
 {
     constexpr std::wstring_view child{ L"Child" };
@@ -83,8 +89,11 @@ TEST_F(RegistryTest, DeleteKey_RemovesKey)
     EXPECT_FALSE(reopened.ok());
 }
 
-// --- 값 읽기/쓰기 round-trip ---
+//***************************************************************************
+// 값 읽기/쓰기 round-trip
+//***************************************************************************
 
+// REG_SZ 값을 쓰고 다시 읽으면 원본과 같은지 확인한다.
 TEST_F(RegistryTest, WriteReadString_RoundTrip)
 {
     constexpr std::wstring_view name{ L"TestString" };
@@ -97,6 +106,7 @@ TEST_F(RegistryTest, WriteReadString_RoundTrip)
     EXPECT_EQ(read.value(), expected);
 }
 
+// REG_DWORD 값을 쓰고 다시 읽으면 원본과 같은지 확인한다.
 TEST_F(RegistryTest, WriteReadDword_RoundTrip)
 {
     constexpr std::wstring_view name{ L"TestDword" };
@@ -109,6 +119,7 @@ TEST_F(RegistryTest, WriteReadDword_RoundTrip)
     EXPECT_EQ(read.value(), expected);
 }
 
+// REG_QWORD 값을 쓰고 다시 읽으면 원본과 같은지 확인한다.
 TEST_F(RegistryTest, WriteReadQword_RoundTrip)
 {
     constexpr std::wstring_view name{ L"TestQword" };
@@ -121,8 +132,11 @@ TEST_F(RegistryTest, WriteReadQword_RoundTrip)
     EXPECT_EQ(read.value(), expected);
 }
 
-// --- 값 읽기 실패 / 삭제 ---
+//***************************************************************************
+// 값 읽기 실패 / 삭제
+//***************************************************************************
 
+// 존재하지 않는 값을 읽으면 실패를 반환하는지 확인한다.
 TEST_F(RegistryTest, ReadString_MissingValue_Fails)
 {
     auto read = reg::ReadString(key_, L"", L"NoSuchValue");
@@ -130,6 +144,7 @@ TEST_F(RegistryTest, ReadString_MissingValue_Fails)
     EXPECT_FALSE(read.ok());
 }
 
+// 값을 삭제한 후 다시 읽으면 실패하는지 확인한다.
 TEST_F(RegistryTest, DeleteValue_RemovesValue)
 {
     constexpr std::wstring_view name{ L"ToDelete" };
@@ -143,8 +158,11 @@ TEST_F(RegistryTest, DeleteValue_RemovesValue)
     EXPECT_FALSE(read.ok());
 }
 
-// --- 서브 키 나열 ---
+//***************************************************************************
+// 서브 키 나열
+//***************************************************************************
 
+// 서브 키가 없는 키를 나열하면 빈 목록을 반환하는지 확인한다.
 TEST_F(RegistryTest, EnumSubKeys_EmptyKey_ReturnsEmpty)
 {
     auto result = reg::EnumSubKeys(key_);
@@ -153,6 +171,7 @@ TEST_F(RegistryTest, EnumSubKeys_EmptyKey_ReturnsEmpty)
     EXPECT_TRUE(result.value().empty());
 }
 
+// 서브 키가 있는 키를 나열하면 모든 서브 키 이름이 포함되는지 확인한다.
 TEST_F(RegistryTest, EnumSubKeys_WithChildren_ReturnsAllNames)
 {
     {
@@ -174,8 +193,11 @@ TEST_F(RegistryTest, EnumSubKeys_WithChildren_ReturnsAllNames)
     static_cast<void>(reg::DeleteKey(key_, L"ChildB"));
 }
 
-// --- 값 나열 ---
+//***************************************************************************
+// 값 나열
+//***************************************************************************
 
+// 값이 없는 키를 나열하면 빈 목록을 반환하는지 확인한다.
 TEST_F(RegistryTest, EnumValues_EmptyKey_ReturnsEmpty)
 {
     auto result = reg::EnumValues(key_);
@@ -184,6 +206,7 @@ TEST_F(RegistryTest, EnumValues_EmptyKey_ReturnsEmpty)
     EXPECT_TRUE(result.value().empty());
 }
 
+// DWORD 값을 나열했을 때 타입과 데이터가 올바르게 파싱되는지 확인한다.
 TEST_F(RegistryTest, EnumValues_DwordValue_HasCorrectTypeAndData)
 {
     constexpr std::wstring_view name{ L"EnumDword" };
@@ -201,6 +224,7 @@ TEST_F(RegistryTest, EnumValues_DwordValue_HasCorrectTypeAndData)
     EXPECT_EQ(it->data<DWORD>(), expected);
 }
 
+// QWORD 값을 나열했을 때 타입과 데이터가 올바르게 파싱되는지 확인한다.
 TEST_F(RegistryTest, EnumValues_QwordValue_HasCorrectTypeAndData)
 {
     constexpr std::wstring_view name{ L"EnumQword" };
@@ -218,6 +242,7 @@ TEST_F(RegistryTest, EnumValues_QwordValue_HasCorrectTypeAndData)
     EXPECT_EQ(it->data<DWORD64>(), expected);
 }
 
+// 문자열 값을 나열했을 때 타입과 데이터가 올바르게 파싱되는지 확인한다.
 TEST_F(RegistryTest, EnumValues_StringValue_HasCorrectTypeAndData)
 {
     constexpr std::wstring_view name{ L"EnumString" };
@@ -235,6 +260,7 @@ TEST_F(RegistryTest, EnumValues_StringValue_HasCorrectTypeAndData)
     EXPECT_EQ(it->data<std::wstring>(), expected);
 }
 
+// 여러 값을 쓴 뒤 나열하면 개수가 일치하는지 확인한다.
 TEST_F(RegistryTest, EnumValues_MultipleValues_CountMatches)
 {
     AssertOk(reg::WriteDword(key_, L"", L"V1", 1u), "WriteDword V1");
